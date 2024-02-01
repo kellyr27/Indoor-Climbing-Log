@@ -1,30 +1,15 @@
 import React, {useEffect, useState} from 'react'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Login from './pages/Login/Login';
 
 
 export default function App() {
 
-  const [data, setData] = useState([{}])
-
-  useEffect(() => {
-    fetch('/api')
-      .then(res => res.json())
-      .then(data => setData(data))
-  }, [])
-
   return (
-    <div>
-      {(typeof data.users === 'undefined') ? (
-        <p>Loading...</p>
-      ) : (
-        <div>
-          <h1>Users</h1>
-          <ul>
-            {data.users.map((user, index) => (
-              <li key={index}>{user}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" exact element={<Login />} />
+      </Routes>
+    </Router>
   )
 }
