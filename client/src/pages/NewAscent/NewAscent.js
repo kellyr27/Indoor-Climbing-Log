@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box } from '@mui/material';
+
+function getTodayDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is zero-based
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
 const NewAscent = () => {
-    const [date, setDate] = useState('');
+    const [date, setDate] = useState(getTodayDate());
     const [notes, setNotes] = useState('');
     const [inputRouteName, setInputRouteName] = useState('');
     const [inputRouteGrade, setInputRouteGrade] = useState('');
@@ -52,6 +61,48 @@ const NewAscent = () => {
     }, []);
 
     return (
+        <>
+        <Box>
+            <h2>Create New Ascent</h2>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <TextField
+                        label="Date"
+                        type="date"
+                        value={date}
+                        onChange={handleDateChange}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                    />
+                </div>
+                <div>
+                    <TextField
+                        label="Notes"
+                        multiline
+                        value={notes}
+                        onChange={handleNotesChange}
+                    />
+                </div>
+                {/* <div>
+                    <FormControl fullWidth>
+                        <InputLabel id="tick-type-label">Tick Type</InputLabel>
+                        <Select
+                            labelId="tick-type-label"
+                            value={tickType}
+                            onChange={handleTickTypeChange}
+                        >
+                            <MenuItem value="Flash">Flash</MenuItem>
+                            <MenuItem value="Redpoint">Redpoint</MenuItem>
+                            <MenuItem value="Hangdog">Hangdog</MenuItem>
+                            <MenuItem value="Attempt">Attempt</MenuItem>
+                        </Select>
+                    </FormControl>
+                </div> */}
+
+            </form>
+        </Box>
+
         <div>
             <h2>Create New Ascent</h2>
             <form onSubmit={handleSubmit}>
@@ -97,6 +148,7 @@ const NewAscent = () => {
                 <button type="submit">Create Ascent</button>
             </form>
         </div>
+        </>
     );
 };
 
