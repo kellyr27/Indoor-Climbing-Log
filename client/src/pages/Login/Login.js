@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -14,7 +15,21 @@ const Login = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        // Perform login logic here
+        
+        const data = {
+            username: username,
+            password: password
+        };
+
+        axios.post('/login', data)
+        .then(response => {
+            // Handle the response from the backend
+            console.log(response.data);
+        })
+        .catch(error => {
+            // Handle any errors
+            console.error(error);
+        });
     };
 
     return (
