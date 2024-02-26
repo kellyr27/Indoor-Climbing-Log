@@ -23,7 +23,6 @@ const Ascent = () => {
         axios.get(`/api/ascents/${id}`)
             .then(response => {
                 setAscent(response.data)
-                console.log(response.data)
             })
             .catch(error => {
                 console.error(error);

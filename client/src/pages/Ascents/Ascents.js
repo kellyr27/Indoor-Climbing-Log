@@ -1,15 +1,10 @@
-/**
- * Needs:
- * Sticky Headers
- * Pagination
- * Sorting
- */
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import { AttemptSVG, FlashSVG, RedpointSVG, HangdogSVG } from '../../../src/assets/svg';
+
 
 const tickTypeIcons = {
     Flash: <FlashSVG />,
@@ -23,11 +18,12 @@ const Ascents = () => {
     const [routes, setRoutes] = useState([]);
     const [columns, setColumns] = useState([]);
 
+
+
     useEffect(() => {
         axios.get('/api/ascents')
             .then(response => {
                 setAscents(response.data);
-                console.log(response.data)
             })
             .catch(error => {
                 console.error(error);
@@ -36,7 +32,6 @@ const Ascents = () => {
         axios.get('/api/routes')
             .then(response => {
                 setRoutes(response.data);
-                console.log(response.data)
             })
             .catch(error => {
                 console.error(error);
@@ -126,12 +121,7 @@ const Ascents = () => {
     }, [ascents, routes])
 
     return (
-        <div style={{ height: '100vh', width: '100%' }}>
-
-            <Button variant="contained" color="primary" component={Link} to="/ascents/new">
-                Create New Ascent
-            </Button>
-
+        <div style={{ height: '92vh', width: '100%' }}>
             <DataGrid
                 rows={ascents}
                 columns={columns}

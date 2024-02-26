@@ -21,13 +21,13 @@ const ClimbingRoutes = () => {
         <div>
             <h1>Routes</h1>
 
-            <ul>
+            {/* <ul>
                 {routes.map(route => (
                     <Link to={`/routes/${route.id}`}>
                         <li key={route.id}>{route.Name}, {route.Grade} {route.Colour}</li>
                     </Link>
                 ))}
-            </ul>
+            </ul> */}
         </div>
     );
 }

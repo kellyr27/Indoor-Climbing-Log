@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box } from '@mui/material';
+import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Autocomplete } from '@mui/material';
 
 function getTodayDate() {
     const today = new Date();
@@ -18,6 +18,7 @@ const NewAscent = () => {
     const [tickType, setTickType] = useState('');
     const [routes, setRoutes] = useState([]);
     const [filteredRoutes, setFilteredRoutes] = useState([]);
+    const [gradeDisabled, setGradeDisabled] = useState(false);
 
     const handleDateChange = (e) => {
         setDate(e.target.value);
@@ -27,13 +28,8 @@ const NewAscent = () => {
         setNotes(e.target.value);
     };
 
-    const handleInputRouteNameChange = (e) => {
-        setInputRouteName(e.target.value);
-
-        // TODO: FIX THIS
-        setFilteredRoutes(routes.filter((route) => {
-            return true
-        }))
+    const handleInputRouteNameChange = (e, value) => {
+        setInputRouteName(value.Name);
     };
 
     const handleInputRouteGradeChange = (e) => {
@@ -60,6 +56,17 @@ const NewAscent = () => {
             .then((data) => setRoutes(data));
     }, []);
 
+    useEffect(() => {
+        const route = routes.find(route => route.Name === inputRouteName);
+        if (route) {
+            setInputRouteGrade(route.Grade);
+            setGradeDisabled(true);
+        } else {
+            setInputRouteGrade('');
+            setGradeDisabled(false);
+        }
+    }, [inputRouteName, routes]);
+
     return (
         <>
         <Box>
@@ -76,78 +83,34 @@ const NewAscent = () => {
                         }}
                     />
                 </div>
-                <div>
+                {/* <div>
                     <TextField
                         label="Notes"
                         multiline
                         value={notes}
                         onChange={handleNotesChange}
                     />
-                </div>
-                {/* <div>
-                    <FormControl fullWidth>
-                        <InputLabel id="tick-type-label">Tick Type</InputLabel>
-                        <Select
-                            labelId="tick-type-label"
-                            value={tickType}
-                            onChange={handleTickTypeChange}
-                        >
-                            <MenuItem value="Flash">Flash</MenuItem>
-                            <MenuItem value="Redpoint">Redpoint</MenuItem>
-                            <MenuItem value="Hangdog">Hangdog</MenuItem>
-                            <MenuItem value="Attempt">Attempt</MenuItem>
-                        </Select>
-                    </FormControl>
                 </div> */}
-
+                {/* <div>
+                    <Autocomplete
+                        freeSolo
+                        options={routes}
+                        getOptionLabel={(option) => option.Name}
+                        onInputChange={handleInputRouteNameChange}
+                        renderInput={(params) => <TextField {...params} label="Route" />}
+                    />
+                </div> */}
+                {/* <div>
+                    <TextField
+                        type="number"
+                        label="Grade Number"
+                        value={inputRouteGrade}
+                        onChange={(e) => setInputRouteGrade(e.target.value)}
+                        disabled={gradeDisabled}
+                    />
+                </div> */}
             </form>
         </Box>
-
-        <div>
-            <h2>Create New Ascent</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Date:</label>
-                    <input type="date" value={date} onChange={handleDateChange} />
-                </div>
-                <div>
-                    <label>Notes:</label>
-                    <textarea value={notes} onChange={handleNotesChange} />
-                </div>
-                <div>
-                    <label>Route:</label>
-                    <input type="text" value={inputRouteName} onChange={handleInputRouteNameChange} />
-                    {inputRouteName && (
-                        <ul>
-                            {filteredRoutes.slice(0, 5).map((route) => {
-                                return (
-                                    <div key={route.id} onClick={() => setInputRouteName(route.Name)}>
-                                        {route.Name} {route.Grade}
-                                    </div>
-                                )
-                            })}
-                        </ul>
-                    )}
-
-                    <label>Grade:</label>
-                    <input type="number" value={inputRouteGrade} onChange={handleInputRouteGradeChange} />
-
-                    <label>Colour:</label>
-                    <input type="color" value={inputRouteColour} onChange={handleInputRouteColourChange} />
-                </div>
-                <div>
-                    <label>Tick Type:</label>
-                    <select value={tickType} onChange={handleTickTypeChange}>
-                        <option value="">Select Tick Type</option>
-                        <option value="Flash">Flash</option>
-                        <option value="Redpoint">Redpoint</option>
-                        <option value="Hangdog">Hangdog</option>
-                        <option value="Attempt">Attempt</option>
-                    </select>
-                </div>
-                <button type="submit">Create Ascent</button>
-            </form>
-        </div>
         </>
     );
 };

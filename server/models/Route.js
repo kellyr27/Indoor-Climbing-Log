@@ -35,7 +35,7 @@ const Route = sequelize.define('Route', {
     indexes: [
         {
             unique: true,
-            fields: ['Name', 'Grade', 'Colour']
+            fields: ['Name']
         }
     ]
 });
