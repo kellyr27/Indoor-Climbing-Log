@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Autocomplete } from '@mui/material';
 
+/**
+ * TODO: Remove the word INPUT
+ */
+
 function getTodayDate() {
     const today = new Date();
     const year = today.getFullYear();
@@ -8,6 +12,8 @@ function getTodayDate() {
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
+
+const popularColors = ['black', 'silver', 'gray', 'white', 'maroon', 'red', 'purple', 'fuchsia', 'green', 'lime', 'olive', 'yellow', 'navy', 'blue', 'teal', 'aqua'];
 
 const NewAscent = () => {
     const [date, setDate] = useState(getTodayDate());
@@ -29,7 +35,7 @@ const NewAscent = () => {
     };
 
     const handleInputRouteNameChange = (e, value) => {
-        setInputRouteName(value.Name);
+        setInputRouteName(value);
     };
 
     const handleInputRouteGradeChange = (e) => {
@@ -60,9 +66,11 @@ const NewAscent = () => {
         const route = routes.find(route => route.Name === inputRouteName);
         if (route) {
             setInputRouteGrade(route.Grade);
+            setInputRouteColour(route.Colour);
             setGradeDisabled(true);
         } else {
             setInputRouteGrade('');
+            setInputRouteColour('')
             setGradeDisabled(false);
         }
     }, [inputRouteName, routes]);
@@ -83,15 +91,15 @@ const NewAscent = () => {
                         }}
                     />
                 </div>
-                {/* <div>
+                <div>
                     <TextField
                         label="Notes"
                         multiline
                         value={notes}
                         onChange={handleNotesChange}
                     />
-                </div> */}
-                {/* <div>
+                </div>
+                <div>
                     <Autocomplete
                         freeSolo
                         options={routes}
@@ -99,8 +107,8 @@ const NewAscent = () => {
                         onInputChange={handleInputRouteNameChange}
                         renderInput={(params) => <TextField {...params} label="Route" />}
                     />
-                </div> */}
-                {/* <div>
+                </div>
+                <div>
                     <TextField
                         type="number"
                         label="Grade Number"
@@ -108,7 +116,30 @@ const NewAscent = () => {
                         onChange={(e) => setInputRouteGrade(e.target.value)}
                         disabled={gradeDisabled}
                     />
-                </div> */}
+                </div>
+                <div>
+                    <FormControl>
+                        <InputLabel id="route-colour-label">Route Colour</InputLabel>
+                        <Select
+                            labelId="route-colour-label"
+                            value={inputRouteColour}
+                            onChange={handleInputRouteColourChange}
+                            disabled={gradeDisabled}
+                        >
+                            {popularColors.map((color) => (
+                                <MenuItem value={color} key={color}>
+                                    <Box
+                                        sx={{
+                                            width: 40,
+                                            height: 20,
+                                            backgroundColor: color,
+                                        }}
+                                    />
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </div>
             </form>
         </Box>
         </>
