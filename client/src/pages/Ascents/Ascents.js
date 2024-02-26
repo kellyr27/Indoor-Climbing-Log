@@ -8,6 +8,15 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
+import Button from '@mui/material/Button';
+import { AttemptSVG, FlashSVG, RedpointSVG, HangdogSVG } from '../../../src/assets/svg';
+
+const tickTypeIcons = {
+    Flash: <FlashSVG />,
+    Redpoint: <RedpointSVG />,
+    Hangdog: <HangdogSVG />,
+    Attempt: <AttemptSVG />,
+};
 
 const Ascents = () => {
     const [ascents, setAscents] = useState([]);
@@ -61,7 +70,10 @@ const Ascents = () => {
                     filterable: true,
                     editable: false,
                     type: 'singleSelect',
-                    valueOptions: ['Flash', 'Redpoint', 'Hangdog', 'Attempt']
+                    valueOptions: ['Flash', 'Redpoint', 'Hangdog', 'Attempt'],
+                    renderCell: (params) => {
+                        return tickTypeIcons[params.value]
+                    }
                 }, {
                     field: 'Notes', 
                     headerName: 'Notes', 
@@ -98,6 +110,16 @@ const Ascents = () => {
                         return route.Grade
                     },
                     type: 'number'
+                }, {
+                    field: 'details',
+                    headerName: 'Details',
+                    sortable: false,
+                    width: 150,
+                    renderCell: (params) => (
+                      <Link to={`/ascents/${params.row.id}`}>
+                        View Details
+                      </Link>
+                    ),
                 }
             ])
         }
@@ -106,18 +128,9 @@ const Ascents = () => {
     return (
         <div style={{ height: '100vh', width: '100%' }}>
 
-            {/* <Link to="/ascents/new">
-                <button>Create New Ascent</button>
-            </Link>
-            
-
-            <ul>
-                {ascents.map(ascent => (
-                    <Link to={`/ascents/${ascent.id}`}>
-                        <li key={ascent.id}>{ascent.Date}, {ascent.TickType} {ascent.Notes}</li>
-                    </Link>
-                ))}
-            </ul> */}
+            <Button variant="contained" color="primary" component={Link} to="/ascents/new">
+                Create New Ascent
+            </Button>
 
             <DataGrid
                 rows={ascents}
