@@ -27,7 +27,6 @@ const getAscent = async (req, res) => {
 
 const createAscent = async (req, res) => {
 
-    console.log('Creating an ascent')
 
     const { 
         tickType: TickType,
@@ -42,19 +41,21 @@ const createAscent = async (req, res) => {
 
     // Check if Date is a valid ISO date
     if (!Date.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/)) {
-        console.log('Date failed')
         return res.status(400).json({message: 'Invalid date format'});
     }
 
     // Check if route exists
+    console.log(routeName, routeGrade, routeColour)
+
     const route = await Route.findOne({ where: { Name: routeName } });
+    console.log(route)
     if (!route) {
         // Create the route
         try {
             const newRoute = await Route.create({ Name: routeName, Grade: routeGrade, Colour: routeColour });
         } catch (error) {
             console.log('Creating route failed')
-            res.status(400).json({message: 'Invalid data'});
+            return res.status(400).json({message: 'Invalid data'});
         }
     }
 
@@ -99,9 +100,19 @@ const editAscent = async (req, res) => {
 const deleteAscent = async (req, res) => {
     const { id } = req.params;
 
+
     try {
         const ascent = await Ascent.findByPk(id);
+
+        // If there is only 1 route using this ascent, delete the route
+        const route = await Route.findByPk(ascent.RouteId);
+        const ascents = await Ascent.findAll({ where: { RouteId: route.id } });
+        if (ascents.length === 1) {
+            await route.destroy();
+        }
+
         await ascent.destroy();
+
         res.status(204).json({message: 'Ascent deleted'});
     } catch (error) {
         res.status(400).json({message: 'Invalid data'});

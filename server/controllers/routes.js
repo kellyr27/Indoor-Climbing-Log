@@ -1,9 +1,12 @@
-const Route = require('../models/route');
-const Ascent = require('../models/ascent');
+const Ascent = require('../models/Ascent');
+const Route = require('../models/Route');
 
 const getAllRoutes = async (req, res) => {
     try {
-        const routes = await Route.findAll();
+
+        const routes = await Route.findAll({
+        include: [{ model: Ascent, as: 'Ascents' }]
+        })
         res.status(200).json(routes);
     } catch (error) {
         res.status(500).json({message: 'Server error'});

@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
-const Route = require('./Route');
 
 const Ascent = sequelize.define('Ascent', {
   Date: {
@@ -18,7 +17,5 @@ const Ascent = sequelize.define('Ascent', {
     type: DataTypes.TEXT
   }
 });
-
-Ascent.belongsTo(Route, { foreignKey: 'RouteId' });
 
 module.exports = Ascent;
