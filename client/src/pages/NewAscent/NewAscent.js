@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Autocomplete } from '@mui/material';
+import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Autocomplete, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { AttemptSVG, FlashSVG, RedpointSVG, HangdogSVG } from '../../../src/assets/svg';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * TODO: Remove the word INPUT
@@ -26,6 +29,8 @@ const NewAscent = () => {
     const [filteredRoutes, setFilteredRoutes] = useState([]);
     const [gradeDisabled, setGradeDisabled] = useState(false);
 
+    const navigate = useNavigate();
+
     const handleDateChange = (e) => {
         setDate(e.target.value);
     };
@@ -46,20 +51,51 @@ const NewAscent = () => {
         setInputRouteColour(e.target.value);
     }
 
-    const handleTickTypeChange = (e) => {
-        setTickType(e.target.value);
+    const handleTickTypeChange = (e, newTickType) => {
+        setTickType(newTickType);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Add logic to handle form submission
+
+        if (!tickType) {
+            alert('Please select a tick type.');
+            return;
+        }
+        
+        // Create a new ascent object
+        const newAscent = {
+            date: new Date(date).toISOString(),
+            notes,
+            routeName: inputRouteName,
+            routeGrade: inputRouteGrade,
+            routeColour: inputRouteColour,
+            tickType: tickType[0].toUpperCase() + tickType.slice(1)
+        }
+
+        axios.post('/api/ascents', newAscent)
+            .then((response) => {
+                // Handle the response
+                console.log('Success:', response.data);
+                navigate('/ascents');
+            })
+            .catch((error) => {
+                // Handle the error
+                console.error('Error:', error);
+            });
+
     };
 
     useEffect(() => {
         // Fetch routes from API
-        fetch('/api/routes')
-            .then((response) => response.json())
-            .then((data) => setRoutes(data));
+        axios.get('/api/routes')
+            .then(response => {
+                setRoutes(response.data.reverse());
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
     }, []);
 
     useEffect(() => {
@@ -89,6 +125,7 @@ const NewAscent = () => {
                         InputLabelProps={{
                             shrink: true,
                         }}
+                        required
                     />
                 </div>
                 <div>
@@ -105,7 +142,7 @@ const NewAscent = () => {
                         options={routes}
                         getOptionLabel={(option) => option.Name}
                         onInputChange={handleInputRouteNameChange}
-                        renderInput={(params) => <TextField {...params} label="Route" />}
+                        renderInput={(params) => <TextField {...params} label="Route" required />}
                     />
                 </div>
                 <div>
@@ -115,10 +152,11 @@ const NewAscent = () => {
                         value={inputRouteGrade}
                         onChange={(e) => setInputRouteGrade(e.target.value)}
                         disabled={gradeDisabled}
+                        required
                     />
                 </div>
                 <div>
-                    <FormControl>
+                    <FormControl required>
                         <InputLabel id="route-colour-label">Route Colour</InputLabel>
                         <Select
                             labelId="route-colour-label"
@@ -140,6 +178,33 @@ const NewAscent = () => {
                         </Select>
                     </FormControl>
                 </div>
+                <div>
+                    <ToggleButtonGroup
+                        value={tickType}
+                        exclusive
+                        onChange={handleTickTypeChange}
+                        aria-label="tick type"
+                        required
+                    >
+                        {gradeDisabled ? (
+                            <ToggleButton value="redpoint" aria-label="redpoint">
+                                <RedpointSVG />
+                            </ToggleButton>
+                        ) : (
+                            <ToggleButton value="flash" aria-label="flash">
+                                <FlashSVG />
+                            </ToggleButton>
+                        )}
+                        <ToggleButton value="hangdog" aria-label="hangdog">
+                            <HangdogSVG />
+                        </ToggleButton>
+                        <ToggleButton value="attempt" aria-label="attempt">
+                            <AttemptSVG />
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                </div>
+
+                <Button type="submit" variant="contained">Submit</Button>
             </form>
         </Box>
         </>

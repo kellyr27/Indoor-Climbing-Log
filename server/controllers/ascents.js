@@ -1,4 +1,5 @@
 const Ascent = require('../models/Ascent');
+const Route = require('../models/Route');
 
 const getAllAscents = async (req, res) => {
     try {
@@ -25,17 +26,47 @@ const getAscent = async (req, res) => {
 }
 
 const createAscent = async (req, res) => {
-    const { RouteId, TickType, Date, Notes } = req.body;
+
+    console.log('Creating an ascent')
+
+    const { 
+        tickType: TickType,
+        date: Date,
+        notes: Notes,
+        routeName,
+        routeGrade,
+        routeColour
+    } = req.body;
+
+    console.log(Date)
 
     // Check if Date is a valid ISO date
     if (!Date.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/)) {
+        console.log('Date failed')
         return res.status(400).json({message: 'Invalid date format'});
     }
 
+    // Check if route exists
+    const route = await Route.findOne({ where: { Name: routeName } });
+    if (!route) {
+        // Create the route
+        try {
+            const newRoute = await Route.create({ Name: routeName, Grade: routeGrade, Colour: routeColour });
+        } catch (error) {
+            console.log('Creating route failed')
+            res.status(400).json({message: 'Invalid data'});
+        }
+    }
+
+    // Create the ascent
     try {
-        const newAscent = await Ascent.create({ RouteId, TickType, Date, Notes });
+        // Find the route
+        const route = await Route.findOne({ where: { Name: routeName } });
+        console.log(TickType, Date, Notes, route.id)
+        const newAscent = await Ascent.create({ RouteId: route.id, TickType: TickType, Date: Date, Notes: Notes });
         res.status(201).json(newAscent);
     } catch (error) {
+        console.log('Creating ascent failed')
         res.status(400).json({message: 'Invalid data'});
     }
 

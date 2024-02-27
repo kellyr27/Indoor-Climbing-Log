@@ -23,7 +23,7 @@ const Ascents = () => {
     useEffect(() => {
         axios.get('/api/ascents')
             .then(response => {
-                setAscents(response.data);
+                setAscents(response.data.reverse());
             })
             .catch(error => {
                 console.error(error);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Typography, Paper, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
@@ -17,6 +17,7 @@ const Ascent = () => {
     const [ascent, setAscent] = useState({});
     const { id } = useParams()
     const [open, setOpen] = React.useState(false);
+    const navigate = useNavigate();
 
     
     useEffect(() => {
@@ -38,6 +39,15 @@ const Ascent = () => {
     };
 
     const handleDelete = () => {
+        axios.delete(`/api/ascents/${id}`)
+            .then(response => {
+                console.log("Ascent deleted successfully");
+                navigate('/ascents');
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        
     }
 
     return (
