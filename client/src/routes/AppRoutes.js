@@ -1,11 +1,12 @@
 // Routes.js
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from '../pages/Login/Login';
 import ClimbingRoutes from '../pages/Routes/Routes';
 import ClimbingRoute from '../pages/Route/Route';
 import Ascents from '../pages/Ascents/Ascents';
 import Ascent from '../pages/Ascent/Ascent';
 import NewAscent from '../pages/NewAscent/NewAscent';
+import Stats from '../pages/Stats/Stats';
 
 const AppRoutes = () => {
   return (
@@ -16,6 +17,8 @@ const AppRoutes = () => {
       <Route path="/ascents/new" exact element={<NewAscent />} />
       <Route path="/ascents/:id" exact element={<Ascent />} />
       <Route path="/ascents" exact element={<Ascents />} />
+      <Route path="/stats" exact element={<Stats />} />
+      <Route path="/" element={<Navigate to="/ascents" />} />
     </Routes>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import { AttemptSVG, FlashSVG, RedpointSVG, HangdogSVG } from '../../../src/assets/svg';
@@ -18,7 +18,7 @@ const Ascents = () => {
     const [routes, setRoutes] = useState([]);
     const [columns, setColumns] = useState([]);
 
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios.get('/api/ascents')
@@ -56,11 +56,13 @@ const Ascents = () => {
                         const year = String(dateObj.getFullYear())
                         return `${day} ${month} ${year}`;
                     },
-                    type: 'date'
+                    type: 'date',
+                    headerAlign: 'center',
+                    align: 'center',
                 }, {
                     field: 'TickType', 
                     headerName: 'Tick Type', 
-                    width: 150,
+                    width: 100,
                     sortable: true,
                     filterable: true,
                     editable: false,
@@ -68,15 +70,9 @@ const Ascents = () => {
                     valueOptions: ['Flash', 'Redpoint', 'Hangdog', 'Attempt'],
                     renderCell: (params) => {
                         return tickTypeIcons[params.value]
-                    }
-                }, {
-                    field: 'Notes', 
-                    headerName: 'Notes', 
-                    width: 150,
-                    sortable: false,
-                    filterable: true,
-                    editable: false,
-                    type: 'string'
+                    },
+                    headerAlign: 'center',
+                    align: 'center',
                 }, {
                     field: 'RouteName',
                     headerName: 'Route Name',
@@ -90,11 +86,13 @@ const Ascents = () => {
                         });
                         return route.Name
                     },
-                    type: 'string'
+                    type: 'string',
+                    headerAlign: 'center',
+                    align: 'center',
                 }, {
                     field: 'RouteGrade',
-                    headerName: 'Route Grade',
-                    width: 150,
+                    headerName: 'Grade',
+                    width: 100,
                     sortable: true,
                     filterable: true,
                     editable: false,
@@ -104,17 +102,25 @@ const Ascents = () => {
                         });
                         return route.Grade
                     },
-                    type: 'number'
+                    type: 'number',
+                    headerAlign: 'center',
+                    align: 'center',
                 }, {
-                    field: 'details',
-                    headerName: 'Details',
+                    field: 'Notes', 
+                    headerName: 'Notes', 
+                    flex: 1,
+                    minWidth: 200,
                     sortable: false,
-                    width: 150,
+                    filterable: true,
+                    editable: false,
+                    type: 'string',
                     renderCell: (params) => (
-                      <Link to={`/ascents/${params.row.id}`}>
-                        View Details
-                      </Link>
+                        <div style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>
+                          {params.value}
+                        </div>
                     ),
+                    headerAlign: 'center',
+                    align: 'left',
                 }
             ])
         }
@@ -127,6 +133,10 @@ const Ascents = () => {
                 columns={columns}
                 pageSize={100}
                 disableCellFocus
+                rowHeight={70}
+                onRowDoubleClick={(params) => {
+                    navigate(`/ascents/${params.row.id}`);
+                }}
             />
         </div>
     );

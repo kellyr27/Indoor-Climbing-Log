@@ -16,6 +16,7 @@ const username = 'kelly'
 const password = 'lollipop1'
 
 // Routes
+// TODO: Fix this
 app.use('/api', routes);
 app.use('/api', ascents);
 

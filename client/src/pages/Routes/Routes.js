@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AttemptSVG, FlashSVG, RedpointSVG, HangdogSVG } from '../../../src/assets/svg';
 import { DataGrid } from '@mui/x-data-grid';
+
 
 
 const tickTypeIcons = {
@@ -17,6 +18,8 @@ const ClimbingRoutes = () => {
     const [routes, setRoutes] = useState([]);
     const [columns, setColumns] = useState([]);
     const [ascents, setAscents] = useState([]);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios.get('/api/routes')
@@ -55,7 +58,7 @@ const ClimbingRoutes = () => {
                 {
                     field: 'Name',
                     headerName: 'Name',
-                    width: 150,
+                    width: 250,
                     sortable: true,
                     filterable: true,
                     editable: false,
@@ -66,7 +69,8 @@ const ClimbingRoutes = () => {
                           {params.value}
                         </div>
                     ),
-                }, {
+                }, 
+                {
                     field: 'Grade',
                     headerName: 'Grade',
                     width: 150,
@@ -74,12 +78,16 @@ const ClimbingRoutes = () => {
                     filterable: true,
                     editable: false,
                     type: 'number'
-                }, {
+                }, 
+                {
                     headerName: 'Ascents',
-                    width: 350,
+                    field: 'ascents',
+                    width: 150,
+                    sortable: false,
+                    filterable: false,
+                    editable: false,
                     renderCell: (params) => {
                         const matchingAscents = ascents.filter(ascent => ascent.RouteId === params.row.id);
-                        // TODO: Want in date order :(
                         return (
                             <div>
                                 {matchingAscents.map((ascent) => {
@@ -93,12 +101,40 @@ const ClimbingRoutes = () => {
                                         case 'Attempt':
                                             return <AttemptSVG />;
                                         default:
-                                            return null;
+                                            return '';
                                         }
                                 })}
                             </div>
                         )
                     },
+                }, 
+                {
+                    headerName: 'Last Ascent Date',
+                    field: 'lastAscentDate',
+                    width: 150,
+                    sortable: true,
+                    filterable: true,
+                    editable: false,
+                    type: 'date',
+                    valueGetter: (params) => {
+                        const matchingAscents = ascents.filter(ascent => ascent.RouteId === params.row.id);
+                        if (matchingAscents.length > 0) {
+                            const dateObj = new Date(matchingAscents[0].Date);
+                            return dateObj
+                        }
+                        return null;
+                    },
+                    renderCell: (params) => {
+                        const matchingAscents = ascents.filter(ascent => ascent.RouteId === params.row.id);
+                        if (matchingAscents.length > 0) {
+                            const dateObj = new Date(matchingAscents[0].Date);
+                            const day = String(dateObj.getDate())
+                            const month = dateObj.toLocaleString('default', { month: 'short' });
+                            const year = String(dateObj.getFullYear())
+                            return `${day} ${month} ${year}`;
+                        }
+                        return '';
+                    }
                 }
             ]);
         }
@@ -112,6 +148,9 @@ const ClimbingRoutes = () => {
                 columns={columns}
                 pageSize={100}
                 disableCellFocus
+                onRowDoubleClick={(params) => {
+                    navigate(`/routes/${params.row.id}`);
+                }}
             />
         </div>
 
