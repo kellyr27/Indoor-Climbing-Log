@@ -15,20 +15,31 @@ const formatDate = (isoString) => {
 
 const Ascent = () => {
     const [ascent, setAscent] = useState({});
+    const [route, setRoute] = useState({});
     const { id } = useParams()
     const [open, setOpen] = React.useState(false);
     const navigate = useNavigate();
 
-    
     useEffect(() => {
-        axios.get(`/api/ascents/${id}`)
-            .then(response => {
-                setAscent(response.data)
-            })
-            .catch(error => {
+        const fetchData = async () => {
+            try {
+                // First, load the ascent data
+                const ascentResponse = await axios.get(`/api/ascents/${id}`);
+                setAscent(ascentResponse.data);
+                console.log('Ascent:', ascentResponse.data);
+                // Then, load the route data based on the ascent's RouteId
+                const routeResponse = await axios.get(`/api/routes/${ascentResponse.data.RouteId}`);
+                setRoute(routeResponse.data);
+                console.log('Route:', routeResponse.data);
+
+            } catch (error) {
                 console.error(error);
-            });
+            }
+        };
+    
+        fetchData();
     }, [id]);
+
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -41,7 +52,6 @@ const Ascent = () => {
     const handleDelete = () => {
         axios.delete(`/api/ascents/${id}`)
             .then(response => {
-                console.log("Ascent deleted successfully");
                 navigate('/ascents');
             })
             .catch(error => {
@@ -53,26 +63,33 @@ const Ascent = () => {
     return (
         <Container maxWidth="sm">
             <Box sx={{ my: 4 }}>
-                <Typography variant="h4" component="h1" gutterBottom>
-                    Ascent {id}
-                </Typography>
 
                 <Paper elevation={3} sx={{ p: 2 }}>
-                    <Typography variant="body1" gutterBottom>
+                    <Typography variant="h6" gutterBottom>
                         {formatDate(ascent.Date)}
                     </Typography>
-                    <Typography variant="body1" gutterBottom>
-                        <AttemptSVG /> {ascent.TickType}
-                    </Typography>
-                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+                        <Typography variant="h4">
+                            {ascent.TickType === 'Flash' && <FlashSVG style={{ width: '1em', height: '1em' }}/>}
+                            {ascent.TickType === 'Redpoint' && <RedpointSVG style={{ width: '1em', height: '1em' }}/>}
+                            {ascent.TickType === 'Hangdog' && <HangdogSVG style={{ width: '1em', height: '1em' }}/>}
+                            {ascent.TickType === 'Attempt' && <AttemptSVG style={{ width: '1em', height: '1em' }}/>}
+                        </Typography>
+                        <Typography variant="h4">
+                            <Link to={`/routes/${route.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                {route.Name}
+                            </Link>
+                        </Typography>
+                        <Typography variant="h4">
+                            {route.Grade}
+                        </Typography>
+                    </Box>
+             
                     <Typography variant="body1" gutterBottom>
                         {ascent.Notes}
                     </Typography>
 
                     <Box sx={{ mt: 2 }}>
-                        <Button variant="contained" color="primary" sx={{ mr: 1 }}>
-                            Edit
-                        </Button>
                         <Button variant="contained" color="secondary" onClick={handleClickOpen}>
                             Delete
                         </Button>

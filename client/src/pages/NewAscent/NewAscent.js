@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Autocomplete, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Typography, Grid, Paper, TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Autocomplete, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { AttemptSVG, FlashSVG, RedpointSVG, HangdogSVG } from '../../../src/assets/svg';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -112,102 +112,112 @@ const NewAscent = () => {
     }, [inputRouteName, routes]);
 
     return (
-        <>
-        <Box>
-            <h2>Create New Ascent</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <TextField
-                        label="Date"
-                        type="date"
-                        value={date}
-                        onChange={handleDateChange}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        required
-                    />
-                </div>
-                <div>
-                    <TextField
-                        label="Notes"
-                        multiline
-                        value={notes}
-                        onChange={handleNotesChange}
-                    />
-                </div>
-                <div>
-                    <Autocomplete
-                        freeSolo
-                        options={routes}
-                        getOptionLabel={(option) => option.Name}
-                        onInputChange={handleInputRouteNameChange}
-                        renderInput={(params) => <TextField {...params} label="Route" required />}
-                    />
-                </div>
-                <div>
-                    <TextField
-                        type="number"
-                        label="Grade Number"
-                        value={inputRouteGrade}
-                        onChange={(e) => setInputRouteGrade(e.target.value)}
-                        disabled={gradeDisabled}
-                        required
-                    />
-                </div>
-                <div>
-                    <FormControl required>
-                        <InputLabel id="route-colour-label">Route Colour</InputLabel>
-                        <Select
-                            labelId="route-colour-label"
-                            value={inputRouteColour}
-                            onChange={handleInputRouteColourChange}
-                            disabled={gradeDisabled}
-                        >
-                            {popularColors.map((color) => (
-                                <MenuItem value={color} key={color}>
-                                    <Box
-                                        sx={{
-                                            width: 40,
-                                            height: 20,
-                                            backgroundColor: color,
-                                        }}
-                                    />
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </div>
-                <div>
-                    <ToggleButtonGroup
-                        value={tickType}
-                        exclusive
-                        onChange={handleTickTypeChange}
-                        aria-label="tick type"
-                        required
-                    >
-                        {gradeDisabled ? (
-                            <ToggleButton value="redpoint" aria-label="redpoint">
-                                <RedpointSVG />
-                            </ToggleButton>
-                        ) : (
-                            <ToggleButton value="flash" aria-label="flash">
-                                <FlashSVG />
-                            </ToggleButton>
-                        )}
-                        <ToggleButton value="hangdog" aria-label="hangdog">
-                            <HangdogSVG />
-                        </ToggleButton>
-                        <ToggleButton value="attempt" aria-label="attempt">
-                            <AttemptSVG />
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                </div>
-
-                <Button type="submit" variant="contained">Submit</Button>
-            </form>
-        </Box>
-        </>
+        <Grid container justifyContent="center">
+            <Paper sx={{ padding: 2, margin: 'auto', maxWidth: { xs: '90%', sm: 500 } }}>
+                <Typography variant="h2" align="center" sx={{ mt: 1, mb: 3 }}>
+                    Create New Ascent
+                </Typography>
+                <form onSubmit={handleSubmit}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Date"
+                                type="date"
+                                value={date}
+                                onChange={handleDateChange}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                required
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Autocomplete
+                                freeSolo
+                                options={routes}
+                                getOptionLabel={(option) => option.Name}
+                                onInputChange={handleInputRouteNameChange}
+                                renderInput={(params) => <TextField {...params} label="Route" required fullWidth />}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                type="number"
+                                label="Grade Number"
+                                value={inputRouteGrade}
+                                onChange={(e) => setInputRouteGrade(e.target.value)}
+                                disabled={gradeDisabled}
+                                required
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl required fullWidth >
+                                <InputLabel id="route-colour-label">Route Colour</InputLabel>
+                                <Select
+                                    labelId="route-colour-label"
+                                    value={inputRouteColour}
+                                    onChange={handleInputRouteColourChange}
+                                    disabled={gradeDisabled}
+                                >
+                                    {popularColors.map((color) => (
+                                        <MenuItem value={color} key={color}>
+                                            <Box
+                                                sx={{
+                                                    width: 40,
+                                                    height: 20,
+                                                    backgroundColor: color,
+                                                }}
+                                            />
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <ToggleButtonGroup
+                                value={tickType}
+                                exclusive
+                                onChange={handleTickTypeChange}
+                                aria-label="tick type"
+                                required
+                                fullWidth
+                            >
+                                {gradeDisabled ? (
+                                    <ToggleButton value="redpoint" aria-label="redpoint">
+                                        <RedpointSVG />
+                                    </ToggleButton>
+                                ) : (
+                                    <ToggleButton value="flash" aria-label="flash">
+                                        <FlashSVG />
+                                    </ToggleButton>
+                                )}
+                                <ToggleButton value="hangdog" aria-label="hangdog">
+                                    <HangdogSVG />
+                                </ToggleButton>
+                                <ToggleButton value="attempt" aria-label="attempt">
+                                    <AttemptSVG />
+                                </ToggleButton>
+                            </ToggleButtonGroup>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Notes"
+                                multiline
+                                rows={3}
+                                value={notes}
+                                onChange={handleNotesChange}
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button type="submit" variant="contained" fullWidth>Submit</Button>
+                        </Grid>
+                    </Grid>
+                </form>
+            </Paper>
+        </Grid>
     );
 };
 

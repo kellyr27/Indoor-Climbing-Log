@@ -58,7 +58,7 @@ const ClimbingRoutes = () => {
                 {
                     field: 'Name',
                     headerName: 'Name',
-                    width: 250,
+                    width: 200,
                     sortable: true,
                     filterable: true,
                     editable: false,
@@ -69,6 +69,8 @@ const ClimbingRoutes = () => {
                           {params.value}
                         </div>
                     ),
+                    headerAlign: 'center',
+                    align: 'left',
                 }, 
                 {
                     field: 'Grade',
@@ -77,36 +79,39 @@ const ClimbingRoutes = () => {
                     sortable: true,
                     filterable: true,
                     editable: false,
-                    type: 'number'
+                    type: 'number',
+                    headerAlign: 'center',
+                    align: 'center',
                 }, 
                 {
                     headerName: 'Ascents',
                     field: 'ascents',
-                    width: 150,
+                    width: 250,
                     sortable: false,
                     filterable: false,
                     editable: false,
                     renderCell: (params) => {
                         const matchingAscents = ascents.filter(ascent => ascent.RouteId === params.row.id);
                         return (
-                            <div>
-                                {matchingAscents.map((ascent) => {
+                            <div style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>
+                                {matchingAscents.map((ascent, index) => {
                                     switch (ascent.TickType) {
                                         case 'Flash':
-                                            return <FlashSVG />;
+                                            return <FlashSVG key={index} />;
                                         case 'Redpoint':
-                                            return <RedpointSVG />;
+                                            return <RedpointSVG key={index} />;
                                         case 'Hangdog':
-                                            return <HangdogSVG />;
+                                            return <HangdogSVG key={index} />;
                                         case 'Attempt':
-                                            return <AttemptSVG />;
+                                            return <AttemptSVG key={index} />;
                                         default:
                                             return '';
-                                        }
+                                    }
                                 })}
                             </div>
                         )
                     },
+                    headerAlign: 'center',
                 }, 
                 {
                     headerName: 'Last Ascent Date',
@@ -134,7 +139,39 @@ const ClimbingRoutes = () => {
                             return `${day} ${month} ${year}`;
                         }
                         return '';
-                    }
+                    },
+                    headerAlign: 'center',
+                    align: 'center',
+                },
+                {
+                    headerName: 'First Ascent Date',
+                    field: 'firstAscentDate',
+                    width: 150,
+                    sortable: true,
+                    filterable: true,
+                    editable: false,
+                    type: 'date',
+                    valueGetter: (params) => {
+                        const matchingAscents = ascents.filter(ascent => ascent.RouteId === params.row.id);
+                        if (matchingAscents.length > 0) {
+                            const dateObj = new Date(matchingAscents[matchingAscents.length - 1].Date);
+                            return dateObj
+                        }
+                        return null;
+                    },
+                    renderCell: (params) => {
+                        const matchingAscents = ascents.filter(ascent => ascent.RouteId === params.row.id);
+                        if (matchingAscents.length > 0) {
+                            const dateObj = new Date(matchingAscents[matchingAscents.length - 1].Date);
+                            const day = String(dateObj.getDate())
+                            const month = dateObj.toLocaleString('default', { month: 'short' });
+                            const year = String(dateObj.getFullYear())
+                            return `${day} ${month} ${year}`;
+                        }
+                        return '';
+                    },
+                    headerAlign: 'center',
+                    align: 'center',
                 }
             ]);
         }

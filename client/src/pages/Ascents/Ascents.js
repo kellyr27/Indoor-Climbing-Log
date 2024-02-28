@@ -76,7 +76,7 @@ const Ascents = () => {
                 }, {
                     field: 'RouteName',
                     headerName: 'Route Name',
-                    width: 150,
+                    width: 200,
                     sortable: true,
                     filterable: true,
                     editable: false,
@@ -86,9 +86,22 @@ const Ascents = () => {
                         });
                         return route.Name
                     },
+                    renderCell: (params) => {
+                        const routeId = params.row.RouteId;
+                        const route = routes.find((route) => {
+                            return route.id === routeId
+                        });
+
+                        return (
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <div style={{ backgroundColor: route.Colour, width: '20px', height: '20px', marginRight: '10px' }} />
+                                {params.value}
+                            </div>
+                        )
+                    },
                     type: 'string',
                     headerAlign: 'center',
-                    align: 'center',
+                    align: 'left',
                 }, {
                     field: 'RouteGrade',
                     headerName: 'Grade',
@@ -110,6 +123,7 @@ const Ascents = () => {
                     headerName: 'Notes', 
                     flex: 1,
                     minWidth: 200,
+                    maxWidth: 400,
                     sortable: false,
                     filterable: true,
                     editable: false,
