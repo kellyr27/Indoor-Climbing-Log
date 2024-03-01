@@ -1,35 +1,58 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts';
+import { Box } from '@mui/material';
 
 const Stats = () => {
     const [sessionStats, setSessionStats] = useState([]);
 
     useEffect(() => {
         axios.get('/api/stats/sessions')
-            .then(response => setSessionStats(response.data))
-            .then(() => console.log(sessionStats))
+            .then(response => {
+                const formattedData = response.data.map(item => ({
+                    ...item,
+                    date: new Date(item.date).getTime(), // Convert date to timestamp
+                }));
+                setSessionStats(formattedData);
+            })
             .catch(error => console.error(error));
     }, []);
 
+    const minValue = sessionStats.length > 0 ? Math.min(...sessionStats.map(item => item.averageRating)) - 5 : 0;
+
+    const formatDate = (tickItem) => {
+        const date = new Date(tickItem);
+        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+    };
+
     return (
-        <div>
-            <LineChart
-                width={500}
-                height={300}
-                data={sessionStats}
-                margin={{
-                    top: 5, right: 30, left: 20, bottom: 5,
-                }}
-            >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis dataKey="averageRating" />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="averageRating" stroke="#8884d8" activeDot={{ r: 8 }} />
-            </LineChart>
-        </div>
+        <Box 
+            display="flex" 
+            justifyContent="center" 
+            alignItems="center" 
+            p={2}
+            mt={4}
+        >
+            <ResponsiveContainer width="100%" height={500} aspect={4 / 3}>
+                <LineChart
+                    data={sessionStats}
+                    margin={{
+                        top: 5, right: 30, left: 20, bottom: 5,
+                    }}
+                >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" tickFormatter={formatDate}>
+                        <Label value="Date" offset={-5} position="insideBottom" />
+                    </XAxis>
+                    <YAxis dataKey="averageRating" domain={[minValue, 'auto']}>
+                        <Label value="Average Rating" angle={-90} position="insideLeft" />
+                    </YAxis>
+                    <Tooltip />
+                    <Legend verticalAlign="top" height={36} />
+                    <Line type="monotone" dataKey="averageRating" stroke="#8884d8" activeDot={{ r: 8 }} />
+                </LineChart>
+            </ResponsiveContainer>
+        </Box>
     );
 };
 

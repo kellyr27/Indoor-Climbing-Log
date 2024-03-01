@@ -6,6 +6,7 @@ import ClimbingRoute from '../pages/Route/Route';
 import Ascents from '../pages/Ascents/Ascents';
 import Ascent from '../pages/Ascent/Ascent';
 import NewAscent from '../pages/NewAscent/NewAscent';
+import EditAscent from '../pages/EditAscent/EditAscent';
 import Stats from '../pages/Stats/Stats';
 
 const AppRoutes = () => {
@@ -15,6 +16,7 @@ const AppRoutes = () => {
       <Route path="/routes/:id" exact element={<ClimbingRoute />} />
       <Route path="/routes" exact element={<ClimbingRoutes />} />
       <Route path="/ascents/new" exact element={<NewAscent />} />
+      <Route path="/ascents/:id/edit" exact element={<EditAscent />} />
       <Route path="/ascents/:id" exact element={<Ascent />} />
       <Route path="/ascents" exact element={<Ascents />} />
       <Route path="/stats" exact element={<Stats />} />

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Grid, Paper, TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Autocomplete, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { AttemptSVG, FlashSVG, RedpointSVG, HangdogSVG } from '../../../src/assets/svg';
+import { AttemptSVG, FlashSVG, RedpointSVG, HangdogSVG } from '../../assets/svg';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { format, parseISO } from 'date-fns';
+import { useNavigate, useParams } from 'react-router-dom';
 
 /**
  * TODO: Remove the word INPUT
@@ -19,7 +18,8 @@ function getTodayDate() {
 
 const popularColors = ['black', 'white', 'blue', 'red', 'gray', 'green', 'yellow', 'purple', 'orange', 'pink'];
 
-const NewAscent = () => {
+const EditAscent = () => {
+    const { id } = useParams();
     const [date, setDate] = useState(getTodayDate());
     const [notes, setNotes] = useState('');
     const [inputRouteName, setInputRouteName] = useState('');
@@ -29,6 +29,9 @@ const NewAscent = () => {
     const [routes, setRoutes] = useState([]);
     const [filteredRoutes, setFilteredRoutes] = useState([]);
     const [gradeDisabled, setGradeDisabled] = useState(false);
+    const [isFirstAscent, setIsFirstAscent] = useState(false);
+    const [initialRouteId, setInitialRouteId] = useState(null);
+    const [showFlash, setShowFlash] = useState(false);
 
     const navigate = useNavigate();
 
@@ -74,10 +77,9 @@ const NewAscent = () => {
             tickType: tickType[0].toUpperCase() + tickType.slice(1)
         }
 
-        axios.post('/api/ascents', newAscent)
+        axios.put(`/api/ascents/${id}`, newAscent)
             .then((response) => {
                 // Handle the response
-                console.log('Success:', response.data);
                 navigate('/ascents');
             })
             .catch((error) => {
@@ -100,28 +102,43 @@ const NewAscent = () => {
     }, []);
 
     useEffect(() => {
-        axios.get('/api/ascents/create-date')
+        axios.get(`/api/ascents/${id}`) // Fetch the ascent to edit
             .then(response => {
-                const isoDate = response.data.date;
-                setDate(isoDate.split('T')[0]);
+                const ascent = response.data;
+                setDate(ascent.Date.split('T')[0]);
+                setNotes(ascent.Notes);
+                setInitialRouteId(ascent.RouteId);
+                setInputRouteName(ascent.RouteName);
+                setIsFirstAscent(ascent.isFirstAscent);
+                setShowFlash(ascent.isFirstAscent);
+                setTickType(ascent.TickType.toLowerCase());
             })
             .catch(error => {
                 console.error(error);
             });
-    }, []);
+    }, [id]);
 
     useEffect(() => {
         const route = routes.find(route => route.Name === inputRouteName);
+
         if (route) {
             setInputRouteGrade(route.Grade);
             setInputRouteColour(route.Colour);
             setGradeDisabled(true);
+            if (route.id === initialRouteId) {
+
+                setShowFlash(isFirstAscent)
+            } else {
+                setShowFlash(false);
+            }
+
         } else {
             setInputRouteGrade('');
             setInputRouteColour('')
             setGradeDisabled(false);
+            setShowFlash(true)
         }
-    }, [inputRouteName, routes]);
+    }, [inputRouteName, routes, initialRouteId, isFirstAscent, showFlash]);
 
     return (
         <Grid container justifyContent="center">
@@ -135,7 +152,7 @@ const NewAscent = () => {
             >
                 <Paper sx={{ padding: 2,  maxWidth: { xs: '100%', sm: 500 } }}>
                     <Typography variant="h2" align="center" sx={{ mt: 1, mb: 3 }}>
-                        Create New Ascent
+                        Edit Ascent
                     </Typography>
                     <form onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
@@ -156,8 +173,9 @@ const NewAscent = () => {
                                 <Autocomplete
                                     freeSolo
                                     options={routes}
-                                    getOptionLabel={(option) => option.Name}
+                                    getOptionLabel={(option) => option ? option.Name : ''}
                                     onInputChange={handleInputRouteNameChange}
+                                    value={routes.find(route => route.Name === inputRouteName) || ''}
                                     renderInput={(params) => <TextField {...params} label="Route" required fullWidth />}
                                 />
                             </Grid>
@@ -204,7 +222,7 @@ const NewAscent = () => {
                                     required
                                     fullWidth
                                 >
-                                    {gradeDisabled ? (
+                                    {!showFlash ? (
                                         <ToggleButton value="redpoint" aria-label="redpoint">
                                             <RedpointSVG />
                                         </ToggleButton>
@@ -232,7 +250,7 @@ const NewAscent = () => {
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <Button type="submit" variant="contained" fullWidth>Submit</Button>
+                                <Button type="submit" variant="contained" fullWidth>Save Changes</Button>
                             </Grid>
                         </Grid>
                     </form>
@@ -242,4 +260,4 @@ const NewAscent = () => {
     );
 };
 
-export default NewAscent;
+export default EditAscent;

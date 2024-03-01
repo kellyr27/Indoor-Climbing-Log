@@ -60,6 +60,10 @@ const Ascent = () => {
         
     }
 
+    const handleEditClick = () => {
+        navigate(`/ascents/${id}/edit`);
+    };
+
     return (
         <Container maxWidth="sm">
             <Box sx={{ my: 4 }}>
@@ -90,6 +94,9 @@ const Ascent = () => {
                     </Typography>
 
                     <Box sx={{ mt: 2 }}>
+                        <Button variant="contained" color="primary" onClick={handleEditClick}>
+                            Edit
+                        </Button>
                         <Button variant="contained" color="secondary" onClick={handleClickOpen}>
                             Delete
                         </Button>

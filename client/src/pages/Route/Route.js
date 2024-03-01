@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { AttemptSVG, FlashSVG, RedpointSVG, HangdogSVG } from '../../../src/assets/svg';
@@ -26,6 +26,9 @@ const ClimbingRoute = () => {
     const [route, setRoute] = useState({});
     const [ascents, setAscents] = useState([]);
     const { id } = useParams()
+
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         axios.get(`/api/routes/${id}`)
@@ -74,7 +77,11 @@ const ClimbingRoute = () => {
                     {ascents.map((ascent) => {
                         const date = format(parseISO(ascent.Date), 'd MMM yyyy');
                         return (
-                            <ListItem button component={Link} to={`/ascents/${ascent.id}`} key={ascent.id}>
+                            <ListItem 
+                                button 
+                                onDoubleClick={() => navigate(`/ascents/${ascent.id}`)} 
+                                key={ascent.id}
+                            >
                                 <span style={{ marginRight: '10px' }}>{getTickTypeSvg(ascent.TickType)}</span>
                                 <span style={{ marginRight: '10px', minWidth: '100px' }}>{date}</span>
                                 <span>{ascent.Notes}</span>

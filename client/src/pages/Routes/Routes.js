@@ -4,7 +4,8 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { AttemptSVG, FlashSVG, RedpointSVG, HangdogSVG } from '../../../src/assets/svg';
 import { DataGrid } from '@mui/x-data-grid';
-
+import { Tooltip } from '@mui/material';
+import { format, parseISO } from 'date-fns';
 
 
 const tickTypeIcons = {
@@ -45,7 +46,7 @@ const ClimbingRoutes = () => {
                 });
 
                 setAscents(data);
-                console.log('ascents', data)
+                
             })
             .catch(error => {
                 console.error(error);
@@ -95,15 +96,35 @@ const ClimbingRoutes = () => {
                         return (
                             <div style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>
                                 {matchingAscents.map((ascent, index) => {
+                                    
+                                    const date = parseISO(ascent.Date); // convert ISO date string to Date object
+                                    const formattedDate = format(date, 'd MMM y');
+
                                     switch (ascent.TickType) {
                                         case 'Flash':
-                                            return <FlashSVG key={index} />;
+                                            return (
+                                                <Tooltip key={index} title={formattedDate}>
+                                                    <FlashSVG key={index} />
+                                                </Tooltip>
+                                            );
                                         case 'Redpoint':
-                                            return <RedpointSVG key={index} />;
+                                            return (
+                                                <Tooltip key={index} title={formattedDate}>
+                                                    <RedpointSVG key={index} />
+                                                </Tooltip>
+                                            );
                                         case 'Hangdog':
-                                            return <HangdogSVG key={index} />;
+                                            return (
+                                                <Tooltip key={index} title={formattedDate}>
+                                                    <HangdogSVG key={index} />
+                                                </Tooltip>
+                                            );
                                         case 'Attempt':
-                                            return <AttemptSVG key={index} />;
+                                            return (
+                                                <Tooltip key={index} title={formattedDate}>
+                                                    <AttemptSVG key={index} />
+                                                </Tooltip>
+                                            );
                                         default:
                                             return '';
                                     }
@@ -188,6 +209,12 @@ const ClimbingRoutes = () => {
                 onRowDoubleClick={(params) => {
                     navigate(`/routes/${params.row.id}`);
                 }}
+                sortModel={[
+                    {
+                        field: 'lastAscentDate',
+                        sort: 'desc', // 'asc' for ascending and 'desc' for descending
+                    },
+                ]}
             />
         </div>
 
