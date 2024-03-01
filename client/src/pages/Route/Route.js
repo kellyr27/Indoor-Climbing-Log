@@ -2,6 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { AttemptSVG, FlashSVG, RedpointSVG, HangdogSVG } from '../../../src/assets/svg';
+import { format, parseISO } from 'date-fns';
+import { Card, CardContent, CardHeader, List, ListItem, Typography } from '@mui/material';
+
+
+const getTickTypeSvg = (tickType) => {
+    switch (tickType) {
+        case 'Flash':
+            return <FlashSVG />;
+        case 'Redpoint':
+            return <RedpointSVG />;
+        case 'Hangdog':
+            return <HangdogSVG />;
+        case 'Attempt':
+            return <AttemptSVG />;
+        default:
+            return null;
+    }
+}
 
 const ClimbingRoute = () => {
     const [route, setRoute] = useState({});
@@ -21,8 +40,16 @@ const ClimbingRoute = () => {
     useEffect(() => {
         axios.get(`/api/routes/${id}/ascents`)
             .then(response => {
-                setAscents(response.data)
-                console.log(response.data)
+                const data = response.data.sort((a, b) => {
+                    // Sort by date
+                    const dateComparison = new Date(b.Date) - new Date(a.Date);
+                    if (dateComparison !== 0) return dateComparison;
+                  
+                    // If dates are equal, sort by id
+                    return b.id - a.id;
+                });
+
+                setAscents(data);
             })
             .catch(error => {
                 console.error(error);
@@ -30,28 +57,33 @@ const ClimbingRoute = () => {
     }, [id]);
 
     return (
-        <div>
-            <h1>Route {id}</h1>
 
-            <p>{route.Name}</p>
-            <p>{route.Grade}</p>
-            <p>{route.Colour}</p>
-
-            <h2>List of Ascents</h2>
-            {ascents.map(ascent => (
-                <div key={ascent.id}>
-                    {/* Replace ascent.property with actual ascent properties */}
-                    <p>{ascent.property}</p>
-                </div>
-            ))}
-            <ul>
-                {ascents.map(ascent => (
-                    <Link to={`/ascents/${ascent.id}`}>
-                        <li key={ascent.id}>{ascent.Date}, {ascent.TickType} {ascent.Notes}</li>
-                    </Link>
-                ))}
-            </ul>
-        </div>
+        <Card>
+            <CardHeader
+                title={
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div style={{ backgroundColor: route.Colour, width: 20, height: 20, marginRight: 10 }} />
+                        {route.Name}
+                    </div>
+                }
+            />
+            <CardContent>
+                <Typography variant="body1">{route.Grade}</Typography>
+                <Typography variant="h6">List of Ascents</Typography>
+                <List>
+                    {ascents.map((ascent) => {
+                        const date = format(parseISO(ascent.Date), 'd MMM yyyy');
+                        return (
+                            <ListItem button component={Link} to={`/ascents/${ascent.id}`} key={ascent.id}>
+                                <span style={{ marginRight: '10px' }}>{getTickTypeSvg(ascent.TickType)}</span>
+                                <span style={{ marginRight: '10px', minWidth: '100px' }}>{date}</span>
+                                <span>{ascent.Notes}</span>
+                            </ListItem>
+                        )
+                    })}
+                </List>
+            </CardContent>
+        </Card>
     );
 }
 
