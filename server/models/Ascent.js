@@ -16,6 +16,6 @@ const Ascent = sequelize.define('Ascent', {
   Notes: {
     type: DataTypes.TEXT
   }
-});
+})
 
 module.exports = Ascent;

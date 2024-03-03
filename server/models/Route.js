@@ -63,7 +63,7 @@ const Route = sequelize.define('Route', {
     ]
 });
 
-Route.hasMany(Ascent, { as: 'Ascents' });
-
+Route.hasMany(Ascent);
+Ascent.belongsTo(Route);
 
 module.exports = Route;

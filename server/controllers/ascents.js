@@ -3,8 +3,13 @@ const Route = require('../models/Route');
 
 const getAllAscents = async (req, res) => {
     try {
-        const ascents = await Ascent.findAll();
-        res.status(200).json(ascents);
+        const ascents = await Ascent.findAll({
+            include: [{
+                model: Route,
+                attributes: ['Name', 'Grade', 'Colour']
+            }],
+        });
+        return res.status(200).json(ascents);
     } catch (error) {
         res.status(500).json({message: 'Server error'});
     }
