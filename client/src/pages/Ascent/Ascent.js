@@ -13,12 +13,13 @@ const Ascent = () => {
     const [open, setOpen] = React.useState(false);
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
-
+    const baseUrl = process.env.REACT_APP_BASE_URL;
 
     useEffect(() => {
         const fetchData = async () => {
+
             try {
-                const ascentResponse = await axios.get(`/api/ascents/${id}`);
+                const ascentResponse = await axios.get(`${baseUrl}/api/ascents/${id}`);
                 setAscent(ascentResponse.data);
 
             } catch (error) {
@@ -27,7 +28,7 @@ const Ascent = () => {
         };
     
         fetchData();
-    }, [id]);
+    }, [id, baseUrl]);
 
 
     const handleClickOpen = () => {
@@ -39,7 +40,7 @@ const Ascent = () => {
     };
 
     const handleDelete = () => {
-        axios.delete(`/api/ascents/${id}`, {
+        axios.delete(`${baseUrl}/api/ascents/${id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

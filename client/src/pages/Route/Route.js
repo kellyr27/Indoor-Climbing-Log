@@ -28,6 +28,7 @@ const ClimbingRoute = () => {
     const [route, setRoute] = useState({});
     const [ascents, setAscents] = useState([]);
     const { id } = useParams()
+    const baseUrl = process.env.REACT_APP_BASE_URL;
 
     const navigate = useNavigate();
 
@@ -37,17 +38,17 @@ const ClimbingRoute = () => {
     };
 
     useEffect(() => {
-        axios.get(`/api/routes/${id}`)
+        axios.get(`${baseUrl}/api/routes/${id}`)
             .then(response => {
                 setRoute(response.data);
             })
             .catch(error => {
                 console.error(error);
             });
-    }, [id]);
+    }, [id, baseUrl]);
     
     useEffect(() => {
-        axios.get(`/api/routes/${id}/ascents`)
+        axios.get(`${baseUrl}/api/routes/${id}/ascents`)
             .then(response => {
                 const data = response.data.sort((a, b) => {
                     // Sort by date
@@ -63,7 +64,7 @@ const ClimbingRoute = () => {
             .catch(error => {
                 console.error(error);
             });
-    }, [id]);
+    }, [id, baseUrl]);
 
     return (
         

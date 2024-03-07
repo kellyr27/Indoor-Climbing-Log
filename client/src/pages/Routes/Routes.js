@@ -14,23 +14,25 @@ const ClimbingRoutes = () => {
     const [routes, setRoutes] = useState([]);
     const [columns, setColumns] = useState([]);
     const [ascents, setAscents] = useState([]);
+    const baseUrl = process.env.REACT_APP_BASE_URL;
+    
 
     //TODO: Fix sorting!
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get('/api/routes')
+        axios.get(`${baseUrl}/api/routes`)
             .then(response => {
                 setRoutes(response.data.reverse());
             })
             .catch(error => {
                 console.error(error);
             });
-    }, []);
+    }, [baseUrl]);
 
     useEffect(() => {
-        axios.get('/api/ascents')
+        axios.get(`${baseUrl}/api/ascents`)
             .then(response => {
 
                 const data = response.data.sort((a, b) => {
@@ -48,7 +50,7 @@ const ClimbingRoutes = () => {
             .catch(error => {
                 console.error(error);
             });
-    }, []);
+    }, [baseUrl]);
 
     useEffect(() => {
         if (routes.length > 0) {
@@ -176,12 +178,6 @@ const ClimbingRoutes = () => {
                 onRowDoubleClick={(params) => {
                     navigate(`/routes/${params.row.id}`);
                 }}
-                sortModel={[
-                    {
-                        field: 'lastAscentDate',
-                        sort: 'desc',
-                    },
-                ]}
             />
         </div>
 

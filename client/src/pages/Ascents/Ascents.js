@@ -11,11 +11,12 @@ import RouteGrade from '../../components/RouteGrade';
 const Ascents = () => {
     const [ascents, setAscents] = useState([]);
     const [columns, setColumns] = useState([]);
+    const baseUrl = process.env.REACT_APP_BASE_URL;
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get('/api/ascents')
+        axios.get(`${baseUrl}/api/ascents`)
             .then(response => {
 
                 // Sort the ascents by date then by id
@@ -33,7 +34,7 @@ const Ascents = () => {
             .catch(error => {
                 console.error(error);
             });
-    }, []);
+    }, [baseUrl]);
 
     useEffect(() => {
         if (ascents.length > 0) {

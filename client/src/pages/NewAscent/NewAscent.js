@@ -23,6 +23,7 @@ const NewAscent = () => {
     const [routes, setRoutes] = useState([]);
     const [gradeDisabled, setGradeDisabled] = useState(false);
     const token = localStorage.getItem('token');
+    const baseUrl = process.env.REACT_APP_BASE_URL;
 
     const navigate = useNavigate();
 
@@ -63,7 +64,7 @@ const NewAscent = () => {
             tickType: tickType[0].toUpperCase() + tickType.slice(1)
         }
 
-        axios.post('/api/ascents', newAscent, {
+        axios.post(`${baseUrl}/api/ascents`, newAscent, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -79,7 +80,7 @@ const NewAscent = () => {
 
     // Fetch routes from API when loading the page for the Autocomplete component
     useEffect(() => {
-        axios.get('/api/routes')
+        axios.get(`${baseUrl}/api/routes`)
             .then(response => {
                 setRoutes(response.data.reverse());
             })
@@ -87,11 +88,11 @@ const NewAscent = () => {
                 console.error(error);
             });
 
-    }, []);
+    }, [baseUrl]);
 
     // Fetch the prefill date from the server
     useEffect(() => {
-        axios.get('/api/ascents/create-date')
+        axios.get(`${baseUrl}/api/ascents/create-date`)
             .then(response => {
                 const isoDate = response.data.date;
                 setDate(isoDate.split('T')[0]);
@@ -99,7 +100,7 @@ const NewAscent = () => {
             .catch(error => {
                 console.error(error);
             });
-    }, []);
+    }, [baseUrl]);
 
     // Prefill the route grade and colour if the route name is selected
     useEffect(() => {

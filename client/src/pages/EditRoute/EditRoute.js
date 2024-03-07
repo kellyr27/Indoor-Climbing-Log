@@ -14,9 +14,10 @@ const EditRoute = () => {
     const { id } = useParams()
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
+    const baseUrl = process.env.REACT_APP_BASE_URL;
 
     useEffect(() => {
-        axios.get(`/api/routes/${id}`)
+        axios.get(`${baseUrl}/api/routes/${id}`)
             .then(response => {
                 setRoute(response.data);
                 setRouteName(response.data.Name);
@@ -26,7 +27,7 @@ const EditRoute = () => {
             .catch(error => {
                 console.error(error);
             });
-    }, []);
+    }, [baseUrl, id]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -37,7 +38,7 @@ const EditRoute = () => {
             Colour: routeColour,
         }
 
-        axios.put(`/api/routes/${id}`, editedRoute, {
+        axios.put(`${baseUrl}/api/routes/${id}`, editedRoute, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

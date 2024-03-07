@@ -33,6 +33,7 @@ const EditAscent = () => {
     const [initialRouteId, setInitialRouteId] = useState(null);
     const [showFlash, setShowFlash] = useState(false);
     const token = localStorage.getItem('token');
+    const baseUrl = process.env.REACT_APP_BASE_URL;
 
 
     const navigate = useNavigate();
@@ -79,7 +80,7 @@ const EditAscent = () => {
             tickType: tickType[0].toUpperCase() + tickType.slice(1)
         }
 
-        axios.put(`/api/ascents/${id}`, newAscent, {
+        axios.put(`${baseUrl}/api/ascents/${id}`, newAscent, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -97,7 +98,7 @@ const EditAscent = () => {
 
     useEffect(() => {
         // Fetch routes from API
-        axios.get('/api/routes')
+        axios.get(`${baseUrl}/api/routes`)
             .then(response => {
                 setRoutes(response.data.reverse());
             })
@@ -105,10 +106,10 @@ const EditAscent = () => {
                 console.error(error);
             });
 
-    }, []);
+    }, [baseUrl]);
 
     useEffect(() => {
-        axios.get(`/api/ascents/${id}`) // Fetch the ascent to edit
+        axios.get(`${baseUrl}/api/ascents/${id}`) // Fetch the ascent to edit
             .then(response => {
                 const ascent = response.data;
                 setDate(ascent.Date.split('T')[0]);
@@ -122,7 +123,7 @@ const EditAscent = () => {
             .catch(error => {
                 console.error(error);
             });
-    }, [id]);
+    }, [id, baseUrl]);
 
     useEffect(() => {
         const route = routes.find(route => route.Name === inputRouteName);

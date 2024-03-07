@@ -5,9 +5,10 @@ import { Box } from '@mui/material';
 
 const Stats = () => {
     const [sessionStats, setSessionStats] = useState([]);
+    const baseUrl = process.env.REACT_APP_BASE_URL;
 
     useEffect(() => {
-        axios.get('/api/stats/sessions')
+        axios.get(`${baseUrl}/api/stats/sessions`)
             .then(response => {
                 const formattedData = response.data.map(item => ({
                     ...item,
@@ -16,7 +17,7 @@ const Stats = () => {
                 setSessionStats(formattedData);
             })
             .catch(error => console.error(error));
-    }, []);
+    }, [baseUrl]);
 
     const minValue = sessionStats.length > 0 ? Math.min(...sessionStats.map(item => item.averageRating)) - 5 : 0;
 

@@ -8,6 +8,7 @@ const Login = () => {
     const [code, setCode] = useState('');
 
     const navigate = useNavigate();
+    const baseUrl = process.env.REACT_APP_BASE_URL;
 
 
     const handleCodeChange = (event) => {
@@ -21,7 +22,7 @@ const Login = () => {
             code: code,
         };
 
-        axios.post('/api/token', data)
+        axios.post(`${baseUrl}/api/token`, data)
         .then(response => {
             const token = response.data.token;
             localStorage.setItem('token', token);
