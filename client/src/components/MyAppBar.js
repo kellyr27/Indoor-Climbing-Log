@@ -14,7 +14,7 @@ const MyAppBar = () => {
     };
 
     return (
-        <AppBar position="static" sx={{
+        <AppBar position="sticky" sx={{
             backgroundColor: "#dddddd",
             color: "white",
             boxShadow: "none",

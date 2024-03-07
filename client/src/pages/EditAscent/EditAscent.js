@@ -32,6 +32,8 @@ const EditAscent = () => {
     const [isFirstAscent, setIsFirstAscent] = useState(false);
     const [initialRouteId, setInitialRouteId] = useState(null);
     const [showFlash, setShowFlash] = useState(false);
+    const token = localStorage.getItem('token');
+
 
     const navigate = useNavigate();
 
@@ -77,7 +79,11 @@ const EditAscent = () => {
             tickType: tickType[0].toUpperCase() + tickType.slice(1)
         }
 
-        axios.put(`/api/ascents/${id}`, newAscent)
+        axios.put(`/api/ascents/${id}`, newAscent, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then((response) => {
                 // Handle the response
                 navigate('/ascents');
@@ -105,10 +111,11 @@ const EditAscent = () => {
         axios.get(`/api/ascents/${id}`) // Fetch the ascent to edit
             .then(response => {
                 const ascent = response.data;
+                console.log(ascent)
                 setDate(ascent.Date.split('T')[0]);
                 setNotes(ascent.Notes);
                 setInitialRouteId(ascent.RouteId);
-                setInputRouteName(ascent.RouteName);
+                setInputRouteName(ascent.Route.Name);
                 setIsFirstAscent(ascent.isFirstAscent);
                 setShowFlash(ascent.isFirstAscent);
                 setTickType(ascent.TickType.toLowerCase());

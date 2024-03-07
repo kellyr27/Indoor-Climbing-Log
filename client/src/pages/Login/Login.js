@@ -1,30 +1,32 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Box, Button, TextField, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+
 
 const Login = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [code, setCode] = useState('');
 
-    const handleUsernameChange = (event) => {
-        setUsername(event.target.value);
-    };
+    const navigate = useNavigate();
 
-    const handlePasswordChange = (event) => {
-        setPassword(event.target.value);
-    };
+
+    const handleCodeChange = (event) => {
+        setCode(event.target.value);
+    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
         
         const data = {
-            username: username,
-            password: password
+            code: code,
         };
 
-        axios.post('/login', data)
+        axios.post('/api/token', data)
         .then(response => {
-            // Handle the response from the backend
-            console.log(response.data);
+            const token = response.data.token;
+            localStorage.setItem('token', token);
+            // Navigate to /ascents
+            navigate('/ascents');
         })
         .catch(error => {
             // Handle any errors
@@ -33,22 +35,24 @@ const Login = () => {
     };
 
     return (
-        <div>
-            <h1>Login</h1>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Username:
-                    <input type="text" value={username} onChange={handleUsernameChange} />
-                </label>
-                <br />
-                <label>
-                    Password:
-                    <input type="password" value={password} onChange={handlePasswordChange} />
-                </label>
-                <br />
-                <button type="submit">Login</button>
-            </form>
-        </div>
+        <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2, // spacing between elements
+            }}
+        >
+            <Typography variant="h4">Login</Typography>
+            <TextField
+                label="Code"
+                value={code}
+                onChange={handleCodeChange}
+            />
+            <Button type="submit" variant="contained">Login</Button>
+        </Box>
     );
 };
 

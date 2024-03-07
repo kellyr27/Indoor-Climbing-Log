@@ -4,9 +4,9 @@ const isDateValidISO = require('../utils/isDateValidISO');
 const isValidTickType = require('../utils/isValidTickType');
 const routeExists = require('../utils/routeExists');
 
+
 const getAllAscents = async (req, res) => {
 
-    console.log('Getting all ascents')
     try {
         const ascents = await Ascent.findAll({
             include: [{

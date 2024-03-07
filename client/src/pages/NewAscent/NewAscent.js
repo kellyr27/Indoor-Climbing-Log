@@ -22,6 +22,7 @@ const NewAscent = () => {
     const [tickType, setTickType] = useState('');
     const [routes, setRoutes] = useState([]);
     const [gradeDisabled, setGradeDisabled] = useState(false);
+    const token = localStorage.getItem('token');
 
     const navigate = useNavigate();
 
@@ -62,9 +63,11 @@ const NewAscent = () => {
             tickType: tickType[0].toUpperCase() + tickType.slice(1)
         }
 
-        console.log('newAscent', newAscent)
-
-        axios.post('/api/ascents', newAscent)
+        axios.post('/api/ascents', newAscent, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then((response) => {
                 navigate('/ascents');
             })
