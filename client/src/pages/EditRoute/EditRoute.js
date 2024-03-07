@@ -12,6 +12,7 @@ const EditRoute = () => {
     const [routeGrade, setRouteGrade] = useState('');
     const [routeColour, setRouteColour] = useState('');
     const { id } = useParams()
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios.get(`/api/routes/${id}`)
@@ -30,22 +31,19 @@ const EditRoute = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        // const newRoute = {
-        //     date: new Date(date).toISOString(),
-        //     notes,
-        //     routeName: inputRouteName,
-        //     routeGrade: inputRouteGrade,
-        //     routeColour: inputRouteColour,
-        //     tickType: tickType[0].toUpperCase() + tickType.slice(1)
-        // }
+        const editedRoute = {
+            Name: routeName,
+            Grade: routeGrade,
+            Colour: routeColour,
+        }
 
-        // axios.post(`/api/routes/${id}/edit`, newRoute)
-        //     .then((response) => {
-        //         navigate('/ascents');
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error:', error);
-        //     });
+        axios.put(`/api/routes/${id}`, editedRoute)
+            .then((response) => {
+                navigate('/routes');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
         
     };
 
