@@ -111,7 +111,6 @@ const EditAscent = () => {
         axios.get(`/api/ascents/${id}`) // Fetch the ascent to edit
             .then(response => {
                 const ascent = response.data;
-                console.log(ascent)
                 setDate(ascent.Date.split('T')[0]);
                 setNotes(ascent.Notes);
                 setInitialRouteId(ascent.RouteId);

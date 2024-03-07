@@ -13,12 +13,12 @@ const EditRoute = () => {
     const [routeColour, setRouteColour] = useState('');
     const { id } = useParams()
     const navigate = useNavigate();
+    const token = localStorage.getItem('token');
 
     useEffect(() => {
         axios.get(`/api/routes/${id}`)
             .then(response => {
                 setRoute(response.data);
-                console.log(response.data)
                 setRouteName(response.data.Name);
                 setRouteGrade(response.data.Grade);
                 setRouteColour(response.data.Colour);
@@ -37,7 +37,11 @@ const EditRoute = () => {
             Colour: routeColour,
         }
 
-        axios.put(`/api/routes/${id}`, editedRoute)
+        axios.put(`/api/routes/${id}`, editedRoute, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then((response) => {
                 navigate('/routes');
             })

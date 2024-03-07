@@ -3,10 +3,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const sequelize = require('./db');
 
+const {uploadAll} = require('./uploads/uploadDb');
+
 // controllers
 const routes = require('./routes/routes');
 const ascents = require('./routes/ascents');
 const stats = require('./routes/stats');
+
+// models
+const Route = require('./models/Route');
+const Ascent = require('./models/Ascent');
+
 
 // middleware
 const app = express();
@@ -25,8 +32,6 @@ app.use('/api', stats);
 app.post('/api/token', (req, res) => {
     const {code} = req.body;
 
-    console.log(code, process.env.TOKEN)
-
     if (code === process.env.CODE) {
         res.status(200).json({token: process.env.TOKEN});
     } else {
@@ -34,6 +39,21 @@ app.post('/api/token', (req, res) => {
     }
 
 });
+
+// app.post('/api/upload', async (req, res) => {
+//     try {
+//         // Clear the database
+//         await Route.destroy({ where: {} });
+//         await Ascent.destroy({ where: {} });
+
+
+//         await uploadAll();
+//         res.status(200).send('Data uploaded successfully');
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send('An error occurred while uploading data');
+//     }
+// })
 
 sequelize.sync().then(() => {
     app.listen(PORT, () => {

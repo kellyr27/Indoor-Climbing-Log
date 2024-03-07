@@ -106,8 +106,6 @@ const calcPoints = (ascent, routes) => {
     const pointsTickType = POINTS_TICKTYPE[ascent.TickType];
     const pointsScarcity = POINTS_SCARCITY[getPointsScarcity(ascent.Sends)];
 
-    console.log(typeof(route.Grade), pointsTickType, pointsScarcity)
-
     return route.Grade + pointsTickType + pointsScarcity;
 
 }
@@ -141,8 +139,6 @@ const getSessionStats = async (req, res) => {
         // Round averageRatings to 2 decimal places
         return { date, averageRating: Math.round(averageRating * 100) / 100 };
     });
-
-    console.log(sessionStats)
 
     return res.status(200).json(sessionStats);
 }

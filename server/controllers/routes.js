@@ -16,7 +16,6 @@ const getAllRoutes = async (req, res) => {
 const getRoute = async (req, res) => {
 
     const { id } = req.params;
-    console.log('req.params', req.params)
 
     try {
         const route = await Route.findByPk(id);
