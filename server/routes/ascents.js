@@ -2,12 +2,16 @@ const express = require('express');
 const router = express.Router();
 const { getAllAscents, getAscent, createAscent, editAscent, deleteAscent, createAscentDate } = require('../controllers/ascents');
 
-// Routes
-router.get('/ascents', getAllAscents);
-router.post('/ascents', createAscent);
-router.get('/ascents/create-date', createAscentDate);
-router.put('/ascents/:id', editAscent);
-router.get('/ascents/:id', getAscent);
-router.delete('/ascents/:id', deleteAscent);
+router.route('/ascents')
+    .get(getAllAscents)
+    .post(createAscent);
+
+router.route('/ascents/create-date')
+    .get(createAscentDate);
+
+router.route('/ascents/:id')
+    .get(getAscent)
+    .put(editAscent)
+    .delete(deleteAscent);
 
 module.exports = router;

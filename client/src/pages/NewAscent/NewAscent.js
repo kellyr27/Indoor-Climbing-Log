@@ -27,7 +27,6 @@ const NewAscent = () => {
     const [inputRouteColour, setInputRouteColour] = useState('');
     const [tickType, setTickType] = useState('');
     const [routes, setRoutes] = useState([]);
-    const [filteredRoutes, setFilteredRoutes] = useState([]);
     const [gradeDisabled, setGradeDisabled] = useState(false);
 
     const navigate = useNavigate();
@@ -42,10 +41,6 @@ const NewAscent = () => {
 
     const handleInputRouteNameChange = (e, value) => {
         setInputRouteName(value);
-    };
-
-    const handleInputRouteGradeChange = (e) => {
-        setInputRouteGrade(e.target.value);
     };
 
     const handleInputRouteColourChange = (e) => {
@@ -64,7 +59,6 @@ const NewAscent = () => {
             return;
         }
         
-        // Create a new ascent object
         const newAscent = {
             date: new Date(date).toISOString(),
             notes,
@@ -76,19 +70,16 @@ const NewAscent = () => {
 
         axios.post('/api/ascents', newAscent)
             .then((response) => {
-                // Handle the response
-                console.log('Success:', response.data);
                 navigate('/ascents');
             })
             .catch((error) => {
-                // Handle the error
                 console.error('Error:', error);
             });
-
+        
     };
 
+    // Fetch routes from API when loading the page for the Autocomplete component
     useEffect(() => {
-        // Fetch routes from API
         axios.get('/api/routes')
             .then(response => {
                 setRoutes(response.data.reverse());
@@ -99,6 +90,7 @@ const NewAscent = () => {
 
     }, []);
 
+    // Fetch the prefill date from the server
     useEffect(() => {
         axios.get('/api/ascents/create-date')
             .then(response => {
@@ -110,6 +102,7 @@ const NewAscent = () => {
             });
     }, []);
 
+    // Prefill the route grade and colour if the route name is selected
     useEffect(() => {
         const route = routes.find(route => route.Name === inputRouteName);
         if (route) {

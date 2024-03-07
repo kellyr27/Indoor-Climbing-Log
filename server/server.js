@@ -40,37 +40,3 @@ sequelize.sync().then(() => {
 }).catch(error => {
     console.error('Unable to sync database:', error);
 });
-
-// Send a database backup to an email
-// app.post('/send-db-backup', async (req, res) => {
-//     console.log(process.env.EMAIL_USER, process.env.EMAIL_PASS)
-//     let transporter = nodemailer.createTransport({
-//         service: 'gmail',
-//         auth: {
-//             user: process.env.EMAIL_USER,
-//             pass: process.env.EMAIL_PASS
-//         }
-//     });
-
-//     let mailOptions = {
-//         from: process.env.EMAIL_USER,
-//         to: 'kellyriz27@gmail.com',
-//         subject: 'Database Backup',
-//         text: 'Find attached the backup of the database.',
-//         // attachments: [
-//         //     {
-//         //         path: './db/database.sqlite3'
-//         //     }
-//         // ]
-//     };
-
-//     transporter.sendMail(mailOptions, (error, info) => {
-//         if (error) {
-//             console.log(error);
-//             res.status(500).send('Error while sending email');
-//         } else {
-//             console.log('Email sent: ' + info.response);
-//             res.send('Email sent successfully');
-//         }
-//     });
-// });

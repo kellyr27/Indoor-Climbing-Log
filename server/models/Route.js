@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
-const Ascent = require('./Ascent');
 
 const Route = sequelize.define('Route', {
     Name: {
@@ -18,42 +17,7 @@ const Route = sequelize.define('Route', {
     Colour: {
         type: DataTypes.STRING,
         allowNull: false,
-    },
-    isSent: {
-        type: DataTypes.VIRTUAL,
-        get() {
-            if (this.Ascents) {
-                return this.Ascents.some((ascent) => {
-                    return ascent.TickType === 'Flash' || ascent.TickType === 'Redpoint'
-                });
-            }
-            return false;
-        },
-    },
-    hangdogCount: {
-        type: DataTypes.VIRTUAL,
-        get() {
-            return this.Ascents ? this.Ascents.filter(ascent => ascent.TickType === 'Hangdog').length : 0;
-        },
-    },
-    attemptCount: {
-        type: DataTypes.VIRTUAL,
-        get() {
-            return this.Ascents ? this.Ascents.filter(ascent => ascent.TickType === 'Attempt').length : 0;
-        },
-    },
-    flashCount: {
-        type: DataTypes.VIRTUAL,
-        get() {
-            return this.Ascents ? this.Ascents.filter(ascent => ascent.TickType === 'Flash').length : 0;
-        },
-    },
-    redpointCount: {
-        type: DataTypes.VIRTUAL,
-        get() {
-            return this.Ascents ? this.Ascents.filter(ascent => ascent.TickType === 'Redpoint').length : 0;
-        },
-    },
+    }
 }, {
     indexes: [
         {
@@ -62,8 +26,6 @@ const Route = sequelize.define('Route', {
         }
     ]
 });
-
-Route.hasMany(Ascent, { as: 'Ascents' });
 
 
 module.exports = Route;

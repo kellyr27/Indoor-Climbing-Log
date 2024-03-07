@@ -1,13 +1,8 @@
 const Ascent = require('../models/Ascent');
 const Route = require('../models/Route');
 
-const getStatsAscents = async () => {
-    // Get a list of all Ascents and Routes
-    const ascents = await Ascent.findAll({});
-    const routes = await Route.findAll({});
-    
-    // Group the ascents togather by RouteId
-    const ascentsByRouteId = ascents.reduce((acc, ascent) => {
+const groupAcsentsByRouteId = (ascents) => {
+    return ascents.reduce((acc, ascent) => {
         const { RouteId, TickType } = ascent;
         if (!acc[RouteId]) {
             acc[RouteId] = [];
@@ -15,10 +10,29 @@ const getStatsAscents = async () => {
         acc[RouteId].push(ascent);
         return acc;
     }, {});
+}
 
+const sortAscentsByDate = (ascents) => {
+    return ascents.sort((a, b) => {
+        const dateComparison = new Date(a.Date) - new Date(b.Date);
+        if (dateComparison !== 0) {
+            return dateComparison;
+        } else {
+            return a.id - b.id;
+        }
+    })
+}
+
+const getStatsAscents = async () => {
+    // Get a list of all Ascents and Routes
+    const ascents = await Ascent.findAll({});
+    const routes = await Route.findAll({});
     
-    // Sort the ascents by date
-    Object.keys(ascentsByRouteId).forEach(RouteId => {
+    // Group the ascents togather by RouteId
+    const ascentsByRouteId = groupAcsentsByRouteId(ascents);
+
+    // Sort the ascents by date then by id for each RouteId
+    Object.keys(ascentsByRouteId).forEach((RouteId) => {
         ascentsByRouteId[RouteId].sort((a, b) => {
             const dateComparison = new Date(a.Date) - new Date(b.Date);
             if (dateComparison !== 0) {
@@ -27,6 +41,7 @@ const getStatsAscents = async () => {
                 return a.id - b.id;
             }
         });
+
         let count = 0;
         ascentsByRouteId[RouteId] = ascentsByRouteId[RouteId].map(ascent => {
             if (ascent.TickType === 'Redpoint' || ascent.TickType === 'Flash') {

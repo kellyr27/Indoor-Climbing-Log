@@ -2,20 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
-import Button from '@mui/material/Button';
 import { AttemptSVG, FlashSVG, RedpointSVG, HangdogSVG } from '../../../src/assets/svg';
-
-
-const tickTypeIcons = {
-    Flash: <FlashSVG />,
-    Redpoint: <RedpointSVG />,
-    Hangdog: <HangdogSVG />,
-    Attempt: <AttemptSVG />,
-};
+import dateToDisplay from '../../utils/dateToDisplay';
+import TickTypeIcon from '../../components/TickTypeIcon';
+import RouteColour from '../../components/RouteColour';
+import RouteGrade from '../../components/RouteGrade';
 
 const Ascents = () => {
     const [ascents, setAscents] = useState([]);
-    const [routes, setRoutes] = useState([]);
     const [columns, setColumns] = useState([]);
 
     const navigate = useNavigate();
@@ -23,24 +17,16 @@ const Ascents = () => {
     useEffect(() => {
         axios.get('/api/ascents')
             .then(response => {
-                setAscents(response.data.reverse());
+                setAscents(response.data);
+                console.log(response.data)
             })
             .catch(error => {
                 console.error(error);
             });
-
-        axios.get('/api/routes')
-            .then(response => {
-                setRoutes(response.data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-        
     }, []);
 
     useEffect(() => {
-        if (ascents.length > 0 && routes.length > 0) {
+        if (ascents.length > 0) {
             setColumns([
                 {
                     field: 'Date', 
@@ -50,16 +36,13 @@ const Ascents = () => {
                     filterable: true,
                     editable: false,
                     valueFormatter: (params) => {
-                        const dateObj = new Date(params.value);
-                        const day = String(dateObj.getDate())
-                        const month = dateObj.toLocaleString('default', { month: 'short' });
-                        const year = String(dateObj.getFullYear())
-                        return `${day} ${month} ${year}`;
+                        return dateToDisplay(params.value);
                     },
                     type: 'date',
                     headerAlign: 'center',
                     align: 'center',
-                }, {
+                }, 
+                {
                     field: 'TickType', 
                     headerName: 'Tick Type', 
                     width: 100,
@@ -69,11 +52,14 @@ const Ascents = () => {
                     type: 'singleSelect',
                     valueOptions: ['Flash', 'Redpoint', 'Hangdog', 'Attempt'],
                     renderCell: (params) => {
-                        return tickTypeIcons[params.value]
+                        return (
+                            <TickTypeIcon tickType={params.value} />
+                        )
                     },
                     headerAlign: 'center',
                     align: 'center',
-                }, {
+                }, 
+                {
                     field: 'RouteName',
                     headerName: 'Route Name',
                     width: 200,
@@ -81,28 +67,22 @@ const Ascents = () => {
                     filterable: true,
                     editable: false,
                     valueGetter: (params) => {
-                        const route = routes.find((route) => {
-                            return route.id === params.row.RouteId
-                        });
-                        return route.Name
+                        return params.row.Route.Name
                     },
                     renderCell: (params) => {
-                        const routeId = params.row.RouteId;
-                        const route = routes.find((route) => {
-                            return route.id === routeId
-                        });
 
                         return (
                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <div style={{ backgroundColor: route.Colour, width: '20px', height: '20px', marginRight: '10px' }} />
-                                {params.value}
+                                <RouteColour colour={params.row.Route.Colour} />
+                                {params.row.Route.Name}
                             </div>
                         )
                     },
                     type: 'string',
                     headerAlign: 'center',
                     align: 'left',
-                }, {
+                }, 
+                {
                     field: 'RouteGrade',
                     headerName: 'Grade',
                     width: 100,
@@ -110,15 +90,18 @@ const Ascents = () => {
                     filterable: true,
                     editable: false,
                     valueGetter: (params) => {
-                        const route = routes.find((route) => {
-                            return route.id === params.row.RouteId
-                        });
-                        return route.Grade
+                        return params.row.Route.Grade
+                    },
+                    renderCell: (params) => {
+                        return (
+                            <RouteGrade grade={params.row.Route.Grade} />
+                        )
                     },
                     type: 'number',
                     headerAlign: 'center',
                     align: 'center',
-                }, {
+                }, 
+                {
                     field: 'Notes', 
                     headerName: 'Notes', 
                     flex: 1,
@@ -138,7 +121,7 @@ const Ascents = () => {
                 }
             ])
         }
-    }, [ascents, routes])
+    }, [ascents])
 
     return (
         <div style={{ height: '92vh', width: '100%' }}>
