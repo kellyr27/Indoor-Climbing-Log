@@ -7,12 +7,14 @@ import Ascents from '../pages/Ascents/Ascents';
 import Ascent from '../pages/Ascent/Ascent';
 import NewAscent from '../pages/NewAscent/NewAscent';
 import EditAscent from '../pages/EditAscent/EditAscent';
+import EditRoute from '../pages/EditRoute/EditRoute';
 import Stats from '../pages/Stats/Stats';
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" exact element={<Login />} />
+      <Route path="/routes/:id/edit" exact element={<EditRoute />} />
       <Route path="/routes/:id" exact element={<ClimbingRoute />} />
       <Route path="/routes" exact element={<ClimbingRoutes />} />
       <Route path="/ascents/new" exact element={<NewAscent />} />

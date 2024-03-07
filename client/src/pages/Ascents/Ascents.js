@@ -17,8 +17,18 @@ const Ascents = () => {
     useEffect(() => {
         axios.get('/api/ascents')
             .then(response => {
-                setAscents(response.data);
-                console.log(response.data)
+
+                // Sort the ascents by date then by id
+                const data = response.data.sort((a, b) => {
+                    // Sort by date
+                    const dateComparison = new Date(b.Date) - new Date(a.Date);
+                    if (dateComparison !== 0) return dateComparison;
+                  
+                    // If dates are equal, sort by id
+                    return b.id - a.id;
+                });
+
+                setAscents(data)
             })
             .catch(error => {
                 console.error(error);

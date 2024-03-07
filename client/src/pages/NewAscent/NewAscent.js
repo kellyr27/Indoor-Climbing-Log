@@ -4,23 +4,17 @@ import { AttemptSVG, FlashSVG, RedpointSVG, HangdogSVG } from '../../../src/asse
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
+import dateToDisplay from '../../utils/dateToDisplay';
 
 /**
  * TODO: Remove the word INPUT
  */
 
-function getTodayDate() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is zero-based
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
 
 const popularColors = ['black', 'white', 'blue', 'red', 'gray', 'green', 'yellow', 'purple', 'orange', 'pink'];
 
 const NewAscent = () => {
-    const [date, setDate] = useState(getTodayDate());
+    const [date, setDate] = useState(new Date().toISOString().slice(0,10));
     const [notes, setNotes] = useState('');
     const [inputRouteName, setInputRouteName] = useState('');
     const [inputRouteGrade, setInputRouteGrade] = useState('');
@@ -67,6 +61,8 @@ const NewAscent = () => {
             routeColour: inputRouteColour,
             tickType: tickType[0].toUpperCase() + tickType.slice(1)
         }
+
+        console.log('newAscent', newAscent)
 
         axios.post('/api/ascents', newAscent)
             .then((response) => {

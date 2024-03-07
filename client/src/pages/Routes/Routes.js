@@ -2,18 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { AttemptSVG, FlashSVG, RedpointSVG, HangdogSVG } from '../../../src/assets/svg';
 import { DataGrid } from '@mui/x-data-grid';
 import { Tooltip } from '@mui/material';
-import { format, parseISO } from 'date-fns';
+import TickTypeIcon from '../../components/TickTypeIcon';
+import RouteColour from '../../components/RouteColour';
+import RouteGrade from '../../components/RouteGrade';
+import dateToDisplay from '../../utils/dateToDisplay';
 
-
-const tickTypeIcons = {
-    Flash: <FlashSVG />,
-    Redpoint: <RedpointSVG />,
-    Hangdog: <HangdogSVG />,
-    Attempt: <AttemptSVG />,
-};
 
 const ClimbingRoutes = () => {
     const [routes, setRoutes] = useState([]);
@@ -66,8 +61,8 @@ const ClimbingRoutes = () => {
                     type: 'string',
                     renderCell: (params) => (
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <div style={{ backgroundColor: params.row.Colour, width: '20px', height: '20px', marginRight: '10px' }} />
-                          {params.value}
+                            <RouteColour colour={params.row.Colour} />
+                            {params.value}
                         </div>
                     ),
                     headerAlign: 'center',
@@ -83,6 +78,9 @@ const ClimbingRoutes = () => {
                     type: 'number',
                     headerAlign: 'center',
                     align: 'center',
+                    renderCell: (params) => (
+                        <RouteGrade grade={params.value} />
+                    ),
                 }, 
                 {
                     headerName: 'Ascents',
@@ -96,38 +94,13 @@ const ClimbingRoutes = () => {
                         return (
                             <div style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>
                                 {matchingAscents.map((ascent, index) => {
-                                    
-                                    const date = parseISO(ascent.Date); // convert ISO date string to Date object
-                                    const formattedDate = format(date, 'd MMM y');
-
-                                    switch (ascent.TickType) {
-                                        case 'Flash':
-                                            return (
-                                                <Tooltip key={index} title={formattedDate}>
-                                                    <FlashSVG key={index} />
-                                                </Tooltip>
-                                            );
-                                        case 'Redpoint':
-                                            return (
-                                                <Tooltip key={index} title={formattedDate}>
-                                                    <RedpointSVG key={index} />
-                                                </Tooltip>
-                                            );
-                                        case 'Hangdog':
-                                            return (
-                                                <Tooltip key={index} title={formattedDate}>
-                                                    <HangdogSVG key={index} />
-                                                </Tooltip>
-                                            );
-                                        case 'Attempt':
-                                            return (
-                                                <Tooltip key={index} title={formattedDate}>
-                                                    <AttemptSVG key={index} />
-                                                </Tooltip>
-                                            );
-                                        default:
-                                            return '';
-                                    }
+                                    return (
+                                        <Tooltip key={index} title={dateToDisplay(ascent.Date)}>
+                                            <span>
+                                                <TickTypeIcon tickType={ascent.TickType} />
+                                            </span>
+                                        </Tooltip>
+                                    )
                                 })}
                             </div>
                         )
@@ -153,11 +126,7 @@ const ClimbingRoutes = () => {
                     renderCell: (params) => {
                         const matchingAscents = ascents.filter(ascent => ascent.RouteId === params.row.id);
                         if (matchingAscents.length > 0) {
-                            const dateObj = new Date(matchingAscents[0].Date);
-                            const day = String(dateObj.getDate())
-                            const month = dateObj.toLocaleString('default', { month: 'short' });
-                            const year = String(dateObj.getFullYear())
-                            return `${day} ${month} ${year}`;
+                            return dateToDisplay(matchingAscents[0].Date);
                         }
                         return '';
                     },
@@ -183,11 +152,7 @@ const ClimbingRoutes = () => {
                     renderCell: (params) => {
                         const matchingAscents = ascents.filter(ascent => ascent.RouteId === params.row.id);
                         if (matchingAscents.length > 0) {
-                            const dateObj = new Date(matchingAscents[matchingAscents.length - 1].Date);
-                            const day = String(dateObj.getDate())
-                            const month = dateObj.toLocaleString('default', { month: 'short' });
-                            const year = String(dateObj.getFullYear())
-                            return `${day} ${month} ${year}`;
+                            return dateToDisplay(matchingAscents[matchingAscents.length - 1].Date);
                         }
                         return '';
                     },
@@ -212,7 +177,7 @@ const ClimbingRoutes = () => {
                 sortModel={[
                     {
                         field: 'lastAscentDate',
-                        sort: 'desc', // 'asc' for ascending and 'desc' for descending
+                        sort: 'desc',
                     },
                 ]}
             />

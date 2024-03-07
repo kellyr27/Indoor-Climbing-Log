@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { AttemptSVG, FlashSVG, RedpointSVG, HangdogSVG } from '../../../src/assets/svg';
 import { format, parseISO } from 'date-fns';
-import { Card, CardContent, CardHeader, List, ListItem, Typography } from '@mui/material';
+import { Card, CardContent, CardHeader, List, ListItem, Typography, Button } from '@mui/material';
 
 
 const getTickTypeSvg = (tickType) => {
@@ -29,6 +29,10 @@ const ClimbingRoute = () => {
 
     const navigate = useNavigate();
 
+
+    const handleEditClick = () => {
+        navigate(`/routes/${id}/edit`);
+    };
 
     useEffect(() => {
         axios.get(`/api/routes/${id}`)
@@ -72,6 +76,9 @@ const ClimbingRoute = () => {
             />
             <CardContent>
                 <Typography variant="body1">{route.Grade}</Typography>
+                <Button variant="contained" color="primary" onClick={handleEditClick}>
+                    Edit Route
+                </Button>
                 <Typography variant="h6">List of Ascents</Typography>
                 <List>
                     {ascents.map((ascent) => {

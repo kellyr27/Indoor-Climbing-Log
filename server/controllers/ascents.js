@@ -79,7 +79,7 @@ const createAscent = async (req, res) => {
     }
     // Check if TickType is valid
     if (!isValidTickType(TickType)) {
-        console.log('Invalid tick type')
+        console.log('Invalid tick type', TickType)
         return res.status(400).json({message: 'Invalid tick type'});
     }
 
