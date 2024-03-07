@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const sequelize = require('./db');
+const cors = require('cors');
 
 const {uploadAll} = require('./uploads/uploadDb');
 
@@ -18,6 +19,9 @@ const Ascent = require('./models/Ascent');
 // middleware
 const app = express();
 app.use(bodyParser.json());
+app.use(cors({
+    origin: ['http://localhost:3000', 'https://indoor-climbing-log.onrender.com/'],
+}));
 
 // global variables
 const PORT = 5000;
