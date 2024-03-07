@@ -15,6 +15,8 @@ const ClimbingRoutes = () => {
     const [columns, setColumns] = useState([]);
     const [ascents, setAscents] = useState([]);
 
+    //TODO: Fix sorting!
+
     const navigate = useNavigate();
 
     useEffect(() => {
