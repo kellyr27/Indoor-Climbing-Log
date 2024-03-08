@@ -14,6 +14,7 @@ const ClimbingRoutes = () => {
     const [routes, setRoutes] = useState([]);
     const [columns, setColumns] = useState([]);
     const [ascents, setAscents] = useState([]);
+    const [sortedRoutes, setSortedRoutes] = useState([]);
     const baseUrl = process.env.REACT_APP_BASE_URL;
     
 
@@ -53,6 +54,28 @@ const ClimbingRoutes = () => {
     }, [baseUrl]);
 
     useEffect(() => {
+        // Sort Routes by last ascent date then by id
+        if (routes.length > 0 && ascents.length > 0) {
+            setSortedRoutes([...routes].sort((a, b) => {
+                // Sort by last ascent date
+                const matchingAscentsA = ascents.filter(ascent => ascent.RouteId === a.id);
+                const matchingAscentsB = ascents.filter(ascent => ascent.RouteId === b.id);
+                
+                if (matchingAscentsA.length > 0 && matchingAscentsB.length > 0) {
+                    const dateComparison = new Date(matchingAscentsB[0].Date) - new Date(matchingAscentsA[0].Date);
+                    if (dateComparison !== 0) {
+                        return dateComparison
+                    };
+                }
+                // If dates are equal, sort by id
+                return b.id - a.id;
+            }))
+        }
+    }, [routes, ascents]);
+
+    useEffect(() => {
+            
+
         if (routes.length > 0) {
             setColumns([
                 {
@@ -171,7 +194,7 @@ const ClimbingRoutes = () => {
 
         <div style={{ height: '92vh', width: '100%' }}>
             <DataGrid
-                rows={routes}
+                rows={sortedRoutes}
                 columns={columns}
                 pageSize={100}
                 disableCellFocus
