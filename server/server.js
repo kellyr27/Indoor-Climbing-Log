@@ -14,17 +14,25 @@ const Ascent = require('./models/Ascent');
 // middleware
 const app = express();
 app.use(bodyParser.json());
-app.use(cors({
-    origin: ['http://localhost:3000', 'https://indoor-climbing-log.onrender.com'],
-}));
+// app.use(cors({
+//     origin: ['http://localhost:3000', 'https://indoor-climbing-log.onrender.com'],
+// }));
+
+const allowedOrigins = [
+    'https://indoor-climbing-log.onrender.com',
+    'http://localhost:3000',
+    'https://climbinglog.com.au',
+    'https://www.climbinglog.com.au',
+  ];
 
 // Set middleware of CORS 
 app.use((req, res, next) => {
 
-    res.setHeader(
-      "Access-Control-Allow-Origin",
-      "https://indoor-climbing-log.onrender.com"
-    );
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+
     res.setHeader(
       "Access-Control-Allow-Methods",
       "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS,CONNECT,TRACE"
