@@ -76,20 +76,20 @@ app.post('/api/token', (req, res) => {
 
 });
 
-// app.post('/api/upload', async (req, res) => {
-//     try {
-//         // Clear the database
-//         await Route.destroy({ where: {} });
-//         await Ascent.destroy({ where: {} });
+app.post('/api/upload', async (req, res) => {
+    try {
+        // Clear the database
+        await Route.destroy({ where: {} });
+        await Ascent.destroy({ where: {} });
 
 
-//         await uploadAll();
-//         res.status(200).send('Data uploaded successfully');
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).send('An error occurred while uploading data');
-//     }
-// })
+        await uploadAll();
+        res.status(200).send('Data uploaded successfully');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('An error occurred while uploading data');
+    }
+})
 
 sequelize.sync().then(() => {
     app.listen(PORT, () => {
